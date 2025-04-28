@@ -1,8 +1,8 @@
 <template>
   <div class="my-account-page">
     <header class="header">
-      <h1 class="logo" @click="goHome">ebooks</h1>
-      <el-button circle class="header-icon" icon="el-icon-user-solid"></el-button>
+      <h1 class="logo" @click="goHome" style="color: #00bcd4; font-family: 'Lucida Handwriting'; cursor: pointer;">Ebooks</h1>
+      <el-button icon="el-icon-money" circle style="border: none; cursor: pointer;"></el-button>
     </header>
 
     <div class="content">
@@ -29,13 +29,18 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
+                <el-form-item label="Phone Number:">
+                  <el-input v-model="user.phoneNumber" disabled></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
                 <el-form-item label="Date Of Birth:">
                   <el-input v-model="user.dateOfBirth" disabled></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="Balance:">
-                  <el-input v-model="user.balance" prefix-icon="el-icon-money" disabled></el-input>
+                  <el-input v-model="user.balance" disabled><template #prefix><span style="margin-left: 8px;">£ </span></template></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -64,6 +69,7 @@ export default {
       user: {
         email: '',
         fullName: '',
+        phoneNumber: '',
         dateOfBirth: '',
         balance: 0,
         avatar: ''
@@ -84,6 +90,9 @@ export default {
     }
   },
   methods: {
+    goHome(){
+      this.$router.push('/dashboard');
+    },
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
