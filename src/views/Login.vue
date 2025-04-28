@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="form-wrapper">
-      <h1 class="logo">Ebooks</h1>
+      <h1 class="logo">Ebook</h1>
 
       <el-form :model="form" :rules="rules" ref="loginForm" label-position="top" class="login-form">
         <el-form-item label="Email" prop="email" class="input-item">
