@@ -115,9 +115,21 @@ export default {
       }
     },
 
-    searchBooks() {
+    async searchBooks() {
     if (this.searchQuery.trim()) {
-      this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
+      try {
+        // 发送请求到后端的搜索接口
+        const response = await request.get('/search/books', {
+          params: { query: this.searchQuery.trim() }
+        });
+        // 将搜索结果保存到 searchResults 中
+        this.searchResults = response.data;
+
+        // 跳转到搜索结果页面，并将搜索的关键词传递过去
+        this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
+      } catch (error) {
+        this.$message.error('Search failed, please try again.');
+      }
     } else {
       this.$message.warning('Please enter a keyword.');
     }
