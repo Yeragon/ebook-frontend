@@ -2,7 +2,7 @@
     <div class="book-list-page">
       <!-- Header -->
       <header class="header">
-        <h1 class="logo" @click="goHome">Ebooks</h1>
+        <h1 class="logo" style="cursor: pointer" @click="goHome">Ebooks</h1>
         <div class="header-actions">
           <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
           <span class="user-name">{{ currentUser.name || 'User' }}</span>
@@ -14,7 +14,7 @@
       <div class="search-container">
         <el-input
           v-model="keyword"
-          :prefix-icon="'el-icon-search'" 
+          :prefix-icon="Search" 
           placeholder="Search"
           class="search-input"
           @keyup.enter="searchBooks"
@@ -60,10 +60,11 @@
 
   
   export default {
-    Search,
+     
     name: 'BookList',
     data() {
       return {
+        Search,
         currentUser: {},
         keyword: '',
         allBooks: [],
