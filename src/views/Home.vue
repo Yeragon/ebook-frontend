@@ -117,7 +117,7 @@ export default {
 
     searchBooks() {
     if (this.searchQuery.trim()) {
-      this.$router.push(`/booklist/${this.searchQuery.trim()}`);
+      this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
     } else {
       this.$message.warning('Please enter a keyword.');
     }
