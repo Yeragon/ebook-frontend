@@ -14,14 +14,14 @@
       <div class="search-container">
         <el-input
           v-model="keyword"
+          :prefix-icon="'el-icon-search'" 
           placeholder="Search"
-          prefix-icon="el-icon-search"
           class="search-input"
           @keyup.enter="searchBooks"
         >
-          <template #append>
-            <el-button icon="el-icon-arrow-right" @click="searchBooks" />
-          </template>
+        <template #append>
+          <el-button  @click="searchBooks" style="font-size: 12px;">Enter</el-button>
+        </template>
         </el-input>
       </div>
   
@@ -56,8 +56,11 @@
   
   <script>
   import request from '@/utils/request';
+  import { Search } from '@element-plus/icons-vue';
+
   
   export default {
+    Search,
     name: 'BookList',
     data() {
       return {
