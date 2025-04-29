@@ -60,6 +60,24 @@
 
   
   export default {
+    created() {
+      const userData = localStorage.getItem('currentUser');
+      if (userData) {
+        this.currentUser = JSON.parse(userData);
+      }
+  
+      this.keyword = this.$route.params.keyword || '';
+      this.fetchBooks();
+    },
+
+
+    watch: {
+  '$route.params.keyword'(newKeyword) {
+    this.keyword = newKeyword || '';
+    this.fetchBooks();
+  }
+},
+
      
     name: 'BookList',
     data() {
@@ -71,15 +89,7 @@
         filteredBooks: []
       };
     },
-    created() {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        this.currentUser = JSON.parse(userData);
-      }
-  
-      this.keyword = this.$route.params.keyword || '';
-      this.fetchBooks();
-    },
+    
     methods: {
       goHome() {
         this.$router.push('/dashboard');
