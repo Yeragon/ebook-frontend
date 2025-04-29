@@ -12,7 +12,17 @@
 
     <!-- Search -->
     <div class="search-container">
-      <el-input v-model="searchQuery" :prefix-icon="Search" placeholder="Search" class="search-input" />
+    <el-input
+        v-model="searchQuery"
+        :prefix-icon="Search"
+        placeholder="Search"
+        class="search-input"
+        @keyup.enter="searchBooks"
+      >
+        <template #append>
+          <el-button @click="searchBooks" style="font-size: 12px;">Enter</el-button>
+        </template>
+      </el-input>
     </div>
 
     <!-- Recommended Books -->
@@ -103,7 +113,15 @@ export default {
       } else {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
       }
+    },
+
+    searchBooks() {
+    if (this.searchQuery.trim()) {
+      this.$router.push(`/booklist/${this.searchQuery.trim()}`);
+    } else {
+      this.$message.warning('Please enter a keyword.');
     }
+  }
   }
 };
 </script>
