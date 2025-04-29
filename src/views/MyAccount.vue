@@ -1,7 +1,8 @@
 <template>
   <div class="my-account-page">
+    <!-- 顶部 -->
     <header class="header">
-      <h1 class="logo" @click="goHome" style="color: #00bcd4; font-family: 'Lucida Handwriting'; cursor: pointer;">Ebooks</h1>
+      <h1 class="logo" @click="goHome">Ebooks</h1>
       <el-button :icon="moneyIcon" circle style="border: none; cursor: pointer;"></el-button>
     </header>
 
@@ -9,38 +10,15 @@
       <h2 class="title">My Account</h2>
       <el-avatar size="large" class="avatar" :src="user.avatar || ''"></el-avatar>
 
-      <el-tabs v-model="activeTab" @tab-click="handleTabClick" class="tabs">
+      <!-- Tabs区域 -->
+      <el-tabs v-model="activeTab" class="tabs" @tab-change="saveWishlist">
+        <!-- Profile 页 -->
         <el-tab-pane label="Profile" name="profile">
           <el-form :model="user" label-width="150px" class="profile-form">
             <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="E-mail:">
-                  <el-input v-model="user.email" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="Password:">
-                  <el-input value="********" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="Full Name:">
-                  <el-input v-model="user.fullName" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="Phone Number:">
-                  <el-input v-model="user.phoneNumber" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="Date Of Birth:">
-                  <el-input v-model="user.dateOfBirth" disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="Balance(£):">
-                  <el-input v-model="user.balance" disabled></el-input>
+              <el-col :span="12" v-for="(value, key) in profileFields" :key="key">
+                <el-form-item :label="value.label">
+                  <el-input :value="user[key]" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -52,9 +30,79 @@
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="Wishlist" name="wishlist"></el-tab-pane>
-        <el-tab-pane label="DUE Soon" name="duesoon"></el-tab-pane>
-        <el-tab-pane label="On loan" name="onloan"></el-tab-pane>
+        <!-- Wishlist 页 -->
+        <el-tab-pane label="Wishlist" name="wishlist">
+          <el-table :data="filteredWishlist" border style="width: 100%">
+            <el-table-column prop="title" label="Book" align="center" />
+            <el-table-column prop="author" label="Author" align="center" />
+            <el-table-column prop="available" label="Available" align="center">
+              <template #default="scope">
+                <span>{{ scope.row.available ? 'Yes' : 'No' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="Loan" align="center">
+              <template #default="scope">
+                <el-button
+                  v-if="scope.row.available"
+                  type="warning"
+                  size="small"
+                  @click="loanBook(scope.row)"
+                >Loan</el-button>
+                <el-button v-else type="info" size="small" disabled>Loan</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label="Favorite" align="center">
+              <template #default="scope">
+                <el-button
+                  :style="{ color: scope.row.favorite ? 'red' : '#ccc' }"
+                  icon="el-icon-heart"
+                  circle
+                  @click="toggleFavorite(scope.row)"
+                ></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+
+        <!-- DUE Soon 页 -->
+        <el-tab-pane label="DUE Soon" name="duesoon">
+  <el-table :data="dueSoonList" border style="width: 100%">
+    <el-table-column prop="title" label="Book" align="center"></el-table-column>
+    <el-table-column prop="author" label="Author" align="center"></el-table-column>
+    <el-table-column prop="rentalStartDate" label="Rental Start Date" align="center"></el-table-column>
+    <el-table-column prop="expirationDate" label="Expiration Date" align="center"></el-table-column>
+    <el-table-column label="Return" align="center">
+      <template #default="scope">
+        <el-button
+          type="warning"
+          size="small"
+          @click="returnBook(scope.row)"
+        >Return</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+</el-tab-pane>
+
+
+        <!-- On Loan 页 -->
+        <el-tab-pane label="On loan" name="onloan">
+  <el-table :data="onLoanList" border style="width: 100%">
+    <el-table-column prop="title" label="Book" align="center"></el-table-column>
+    <el-table-column prop="author" label="Author" align="center"></el-table-column>
+    <el-table-column prop="rentalStartDate" label="Rental Start Date" align="center"></el-table-column>
+    <el-table-column prop="expirationDate" label="Expiration Date" align="center"></el-table-column>
+    <el-table-column label="Comment" align="center">
+      <template #default="scope">
+        <el-button
+          icon="el-icon-chat-line-round"
+          circle
+          size="small"
+          @click="commentBook(scope.row)"
+        ></el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+</el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -77,7 +125,17 @@ export default {
         balance: 0,
         avatar: ''
       },
-      moneyIcon: h(Money)
+      profileFields: {
+        email: { label: 'E-mail:' },
+        fullName: { label: 'Full Name:' },
+        phoneNumber: { label: 'Phone Number:' },
+        dateOfBirth: { label: 'Date Of Birth:' },
+        balance: { label: 'Balance(£):' }
+      },
+      wishlist: [],
+      onLoanList: [],
+      dueSoonList: [],
+      moneyIcon: h(Money),
     };
   },
   created() {
@@ -92,9 +150,17 @@ export default {
         avatar: user.avatar || ''
       };
     }
+    this.loadWishlist();
+    this.loadOnLoan();
+    this.loadDueSoon();
+  },
+  computed: {
+    filteredWishlist() {
+      return this.wishlist.filter(book => book.favorite !== false);
+    }
   },
   methods: {
-    goHome(){
+    goHome() {
       this.$router.push('/dashboard');
     },
     logout() {
@@ -102,22 +168,56 @@ export default {
       this.$message.success('Logged out successfully!');
       this.$router.push('/');
     },
-    handleTabClick(tab) {
-      if (tab.name === 'profile') {
-        this.$router.push('/myaccount');
-      } else if (tab.name === 'wishlist') {
-        this.$router.push('/wishlist');
-      } else if (tab.name === 'duesoon') {
-        this.$router.push('/duesoon');
-      } else if (tab.name === 'onloan') {
-        this.$router.push('/onloan');
-      }
-    },
     goToEdit() {
       this.$router.push('/editpage');
-    }
+    },
+    toggleFavorite(book) {
+      book.favorite = !book.favorite;
+    },
+    loanBook(book) {
+      this.$message.success(`You loaned "${book.title}" successfully!`);
+      // 这里可以加实际借书逻辑
+    },
+    loadWishlist() {
+      const data = localStorage.getItem('wishlistBooks');
+      this.wishlist = data ? JSON.parse(data) : [];
+    },
+    saveWishlist() {
+      const favoriteBooks = this.wishlist.filter(book => book.favorite !== false);
+      localStorage.setItem('wishlistBooks', JSON.stringify(favoriteBooks));
+    },
+
+    loadOnLoan() {
+    const data = localStorage.getItem('onLoanBooks');
+    this.onLoanList = data ? JSON.parse(data) : [];
+    },
+    commentBook(book) {
+    this.$message.success(`You clicked comment on "${book.title}"!`);
+    },
+
+    loadDueSoon() {
+  const allBooks = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+  const today = new Date();
+  const threeDaysLater = new Date();
+  threeDaysLater.setDate(today.getDate() + 7);
+
+  this.dueSoonList = allBooks.filter(book => {
+    const dueDate = new Date(book.expirationDate);
+    return dueDate >= today && dueDate <= threeDaysLater;
+  });
+},
+returnBook(book) {
+  this.$message.success(`You have returned "${book.title}" successfully!`);
+  // 从本地 onLoanBooks 中移除这本书
+  const updated = this.dueSoonList.filter(b => b.title !== book.title);
+  this.dueSoonList = updated;
+
+  let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+  allOnLoan = allOnLoan.filter(b => b.title !== book.title);
+  localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+}
   }
-};
+}
 </script>
 
 <style scoped>
@@ -137,6 +237,8 @@ export default {
   font-size: 32px;
   font-weight: bold;
   color: #00bcd4;
+  font-family: 'Lucida Handwriting';
+  cursor: pointer;
 }
 
 .content {
@@ -170,4 +272,12 @@ export default {
   justify-content: center;
   gap: 20px;
 }
+
+.empty-text {
+  text-align: center;
+  margin-top: 30px;
+  color: #999;
+  font-size: 18px;
+}
 </style>
+
