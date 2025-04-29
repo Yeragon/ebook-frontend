@@ -13,7 +13,7 @@
 
     <!-- Search -->
     <div class="search-container">
-      <el-input v-model="searchQuery" placeholder="Search" prefix-icon="el-icon-search" class="search-input" />
+      <el-input v-model="searchQuery" :prefix-icon="Search" placeholder="Search" class="search-input" />
     </div>
 
     <!-- Recommended Books -->
@@ -76,13 +76,14 @@
 
 <script>
 import request from '@/utils/request';
-import { Refresh } from '@element-plus/icons-vue' // 引入刷新图标
+import { Search, Refresh } from '@element-plus/icons-vue' // 引入图标
 
 export default {
   name: 'HomeLogged',
   data() {
     return {
-      Refresh,//绑定图标以供模板使用
+      Refresh,//绑定图标
+      Search,
       currentUser: {},
       searchQuery: '',
       recommendedBooks: [],
