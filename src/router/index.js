@@ -15,6 +15,7 @@ import DueSoon from '@/views/DueSoon.vue';
 import OnLoan from '@/views/OnLoan.vue';
 import Category from '@/views/Category.vue';
 import EditPage from '@/views/EditPage.vue';
+import BookList from '@/views/BookList.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -30,6 +31,7 @@ const routes = [
   { path: '/onloan', name: 'OnLoan', component: OnLoan },
   { path: '/category/:name', name: 'Category', component: Category },
   { path: '/editpage', name: 'EditPage', component: EditPage },
+  { path: '/booklist/:keyword', name: 'BookList', component: BookList },
   // 兜底处理：访问不存在的路径，自动跳转回首页
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
