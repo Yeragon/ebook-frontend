@@ -66,14 +66,43 @@
 
         <!-- DUE Soon 页 -->
         <el-tab-pane label="DUE Soon" name="duesoon">
-          <div class="empty-text">Coming Soon...</div>
-        </el-tab-pane>
+  <el-table :data="dueSoonList" border style="width: 100%">
+    <el-table-column prop="title" label="Book" align="center"></el-table-column>
+    <el-table-column prop="author" label="Author" align="center"></el-table-column>
+    <el-table-column prop="rentalStartDate" label="Rental Start Date" align="center"></el-table-column>
+    <el-table-column prop="expirationDate" label="Expiration Date" align="center"></el-table-column>
+    <el-table-column label="Return" align="center">
+      <template #default="scope">
+        <el-button
+          type="warning"
+          size="small"
+          @click="returnBook(scope.row)"
+        >Return</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+</el-tab-pane>
+
 
         <!-- On Loan 页 -->
         <el-tab-pane label="On loan" name="onloan">
-          <div class="empty-text">Coming Soon...</div>
-        </el-tab-pane>
-
+  <el-table :data="onLoanList" border style="width: 100%">
+    <el-table-column prop="title" label="Book" align="center"></el-table-column>
+    <el-table-column prop="author" label="Author" align="center"></el-table-column>
+    <el-table-column prop="rentalStartDate" label="Rental Start Date" align="center"></el-table-column>
+    <el-table-column prop="expirationDate" label="Expiration Date" align="center"></el-table-column>
+    <el-table-column label="Comment" align="center">
+      <template #default="scope">
+        <el-button
+          icon="el-icon-chat-line-round"
+          circle
+          size="small"
+          @click="commentBook(scope.row)"
+        ></el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+</el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -104,6 +133,8 @@ export default {
         balance: { label: 'Balance(£):' }
       },
       wishlist: [],
+      onLoanList: [],
+      dueSoonList: [],
       moneyIcon: h(Money),
     };
   },
@@ -120,6 +151,8 @@ export default {
       };
     }
     this.loadWishlist();
+    this.loadOnLoan();
+    this.loadDueSoon();
   },
   computed: {
     filteredWishlist() {
@@ -152,7 +185,37 @@ export default {
     saveWishlist() {
       const favoriteBooks = this.wishlist.filter(book => book.favorite !== false);
       localStorage.setItem('wishlistBooks', JSON.stringify(favoriteBooks));
-    }
+    },
+
+    loadOnLoan() {
+    const data = localStorage.getItem('onLoanBooks');
+    this.onLoanList = data ? JSON.parse(data) : [];
+    },
+    commentBook(book) {
+    this.$message.success(`You clicked comment on "${book.title}"!`);
+    },
+
+    loadDueSoon() {
+  const allBooks = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+  const today = new Date();
+  const threeDaysLater = new Date();
+  threeDaysLater.setDate(today.getDate() + 7);
+
+  this.dueSoonList = allBooks.filter(book => {
+    const dueDate = new Date(book.expirationDate);
+    return dueDate >= today && dueDate <= threeDaysLater;
+  });
+},
+returnBook(book) {
+  this.$message.success(`You have returned "${book.title}" successfully!`);
+  // 从本地 onLoanBooks 中移除这本书
+  const updated = this.dueSoonList.filter(b => b.title !== book.title);
+  this.dueSoonList = updated;
+
+  let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+  allOnLoan = allOnLoan.filter(b => b.title !== book.title);
+  localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+}
   }
 }
 </script>
