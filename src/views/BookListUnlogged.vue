@@ -4,9 +4,8 @@
       <header class="header">
         <h1 class="logo" style="cursor: pointer" @click="goHome">Ebooks</h1>
         <div class="header-actions">
-          <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
-          <span class="user-name">{{ currentUser.name || 'User' }}</span>
-          <el-button type="text" @click="logout">Logout</el-button>
+          <el-button class="login-button" @click="$router.push('/login')">Login</el-button>
+          <el-avatar icon="el-icon-user" />
         </div>
       </header>
   
@@ -60,24 +59,6 @@
 
   
   export default {
-    created() {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        this.currentUser = JSON.parse(userData);
-      }
-  
-      this.keyword = this.$route.params.keyword || '';
-      this.fetchBooks();
-    },
-
-
-    watch: {
-  '$route.params.keyword'(newKeyword) {
-    this.keyword = newKeyword || '';
-    this.fetchBooks();
-  }
-},
-
      
     name: 'BookList',
     data() {
@@ -89,17 +70,20 @@
         filteredBooks: []
       };
     },
-    
+    created() {
+      const userData = localStorage.getItem('currentUser');
+      if (userData) {
+        this.currentUser = JSON.parse(userData);
+      }
+  
+      this.keyword = this.$route.params.keyword || '';
+      this.fetchBooks();
+    },
     methods: {
       goHome() {
-        this.$router.push('/dashboard');
-      },
-        
-      logout() {
-        localStorage.removeItem('currentUser');
-        this.$message.success('Logged out successfully!');
         this.$router.push('/');
       },
+        
       async fetchBooks() {
         try {
           const response = await request.get('/books');
@@ -117,7 +101,7 @@
         );
       },
       goBookDetail(bookId) {
-        this.$router.push(`/bookdetail/${bookId}`);
+        this.$router.push(`/bookdetailunlogged/${bookId}`);
       }
     }
   };
@@ -210,4 +194,3 @@
     color: #999;
   }
   </style>
-  
