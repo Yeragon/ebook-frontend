@@ -12,15 +12,17 @@
 
     <!-- Search -->
     <div class="search-container">
-      <el-input v-model="searchQuery" placeholder="Search" prefix-icon="el-icon-search" class="search-input" />
+      <el-input v-model="searchQuery" :prefix-icon="Search" placeholder="Search" class="search-input" />
     </div>
 
     <!-- Recommended Books -->
     <section class="section">
+      <div class="section-title-with-icon">
       <div class="section-header">
         <h2>Recommended Books</h2>
-        <el-button type="text" icon="el-icon-refresh" @click="refreshBooks"></el-button>
+        <el-button type="text" :icon="Refresh" @click="refreshBooks" class="refresh-icon"></el-button>
       </div>
+    </div>
       <div class="book-list">
         <div v-for="book in recommendedBooks" :key="book.id" class="book-card" @click="goBookDetail(book.id)">
           <el-image :src="book.coverURL" fit="cover" class="book-image">
@@ -59,11 +61,14 @@
 
 <script>
 import request from '@/utils/request';
+import { Search, Refresh } from '@element-plus/icons-vue' // 引入图标
 
 export default {
   name: 'Home',
   data() {
     return {
+      Refresh,//绑定图标
+      Search,
       searchQuery: '',
       recommendedBooks: [],
       classifications: [
@@ -196,5 +201,24 @@ export default {
   width: 100%;
   height: 100%;
   color: #ccc;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 控制标题和图标的间距 */
+}
+
+.refresh-icon {
+  padding: 0;
+  font-size: 18px;
+  color: #39acdd;
+  margin-left: 15px;
 }
 </style>
