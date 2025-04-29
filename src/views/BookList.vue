@@ -2,7 +2,7 @@
     <div class="book-list-page">
       <!-- Header -->
       <header class="header">
-        <h1 class="logo" @click="goHome">Ebooks</h1>
+        <h1 class="logo" style="cursor: pointer" @click="goHome">Ebooks</h1>
         <div class="header-actions">
           <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
           <span class="user-name">{{ currentUser.name || 'User' }}</span>
@@ -14,14 +14,14 @@
       <div class="search-container">
         <el-input
           v-model="keyword"
+          :prefix-icon="Search" 
           placeholder="Search"
-          prefix-icon="el-icon-search"
           class="search-input"
           @keyup.enter="searchBooks"
         >
-          <template #append>
-            <el-button icon="el-icon-arrow-right" @click="searchBooks" />
-          </template>
+        <template #append>
+          <el-button  @click="searchBooks" style="font-size: 12px;">Enter</el-button>
+        </template>
         </el-input>
       </div>
   
@@ -56,11 +56,15 @@
   
   <script>
   import request from '@/utils/request';
+  import { Search } from '@element-plus/icons-vue';
+
   
   export default {
+     
     name: 'BookList',
     data() {
       return {
+        Search,
         currentUser: {},
         keyword: '',
         allBooks: [],
