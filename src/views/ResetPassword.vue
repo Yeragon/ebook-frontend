@@ -8,13 +8,18 @@
           <el-input v-model="form.email" placeholder="Enter your registered email"></el-input>
         </el-form-item>
 
-        <el-form-item label="New Password" prop="password" class="input-item">
-          <el-input v-model="form.password" type="password" placeholder="Enter new password"></el-input>
-        </el-form-item>
+        <el-form-item label="Current Password" prop="oldPassword" class="input-item">
+  <el-input v-model="form.oldPassword" type="password" placeholder="Enter current password"></el-input>
+</el-form-item>
 
-        <el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
-          <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm new password"></el-input>
-        </el-form-item>
+<el-form-item label="New Password" prop="newPassword" class="input-item">
+  <el-input v-model="form.newPassword" type="password" placeholder="Enter new password"></el-input>
+</el-form-item>
+
+<el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
+  <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm new password"></el-input>
+</el-form-item>
+
 
         <div class="form-links">
           <el-link type="primary" @click="$router.push('/login')">Back to Login</el-link>
@@ -38,50 +43,67 @@ export default {
   data() {
     return {
       form: {
-        email: '',
-        password: '',
-        confirmPassword: ''
+  email: '',
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+},
+
+rules: {
+  email: [
+    { required: true, message: 'Please input your registered email', trigger: 'blur' },
+    { type: 'email', message: 'Please input a valid email', trigger: ['blur', 'change'] }
+  ],
+  oldPassword: [
+    { required: true, message: 'Please input your current password', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
+  ],
+  newPassword: [
+    { required: true, message: 'Please input your new password', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: 'Please confirm your new password', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== this.form.newPassword) {
+          callback(new Error('Passwords do not match'));
+        } else {
+          callback();
+        }
       },
-      rules: {
-        email: [
-          { required: true, message: 'Please input your registered email', trigger: 'blur' },
-          { type: 'email', message: 'Please input a valid email', trigger: ['blur', 'change'] }
-        ],
-        password: [
-          { required: true, message: 'Please input your new password', trigger: 'blur' },
-          { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
-        ],
-        confirmPassword: [
-          { required: true, message: 'Please confirm your new password', trigger: 'blur' },
-          { validator: (rule, value, callback) => {
-              if (value !== this.form.password) {
-                callback(new Error('Passwords do not match'));
-              } else {
-                callback();
-              }
-            }, trigger: 'blur' }
-        ]
-      }
+      trigger: 'blur'
+    }
+  ]
+}
+
     }
   },
   methods: {
-    submitReset() {
-      this.$refs.resetForm.validate(async (valid) => {
-        if (valid) {
-          try {
-            await request.post('/resetpassword', {
-              email: this.form.email,
-              newPassword: this.form.password
-            });
-            this.$message.success('Password reset successful! Please login.');
-            this.$router.push('/login');
-          } catch (error) {
-            console.error('Password reset failed', error);
-            this.$message.error('Reset failed. Please check your email.');
-          }
-        }
-      });
+    async submitReset() {
+  this.$refs.resetForm.validate(async (valid) => {
+    if (valid) {
+      if (this.form.newPassword !== this.form.confirmPassword) {
+        this.$message.error('New passwords do not match.');
+        return;
+      }
+
+      try {
+        await request.post('/changepassword', {
+          email: this.form.email,
+          oldPassword: this.form.oldPassword,
+          newPassword: this.form.newPassword
+        });
+        this.$message.success('Password changed successfully. Please login again.');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Password change failed', error);
+        this.$message.error(error?.message || 'Password change failed.');
+      }
     }
+  });
+}
+
   }
 }
 </script>

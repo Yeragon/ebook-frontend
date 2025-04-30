@@ -61,23 +61,24 @@ export default {
     }
   },
   methods: {
-    submitRegister() {
-      this.$refs.registerForm.validate(async (valid) => {
-        if (valid) {
-          try {
-            await request.post('/register', {
-              email: this.form.email,
-              password: this.form.password
-            });
-            this.$message.success('Registration successful! Please login.');
-            this.$router.push('/login');
-          } catch (error) {
-            console.error('Registration failed', error);
-            this.$message.error('Registration failed. Please try again.');
-          }
-        }
-      });
+    async submitRegister() {
+  this.$refs.registerForm.validate(async (valid) => {
+    if (valid) {
+      try {
+        await request.post('/register', {
+          email: this.form.email,
+          password: this.form.password
+        });
+        this.$message.success('Registration successful! Please login.');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Registration failed', error);
+        this.$message.error(error?.message || 'Registration failed. Please try again.');
+      }
     }
+  });
+}
+
   }
 }
 </script>
