@@ -43,10 +43,11 @@ export default {
     const fetchBookDetail = async () => {
       try {
         const bookId = route.params.id;
-        const res = await request.get(`/ebook/${bookId}`);
+        const res = await request.get(`/books/${bookId}`);
         book.value = res.data || {};
       } catch (error) {
         console.error('Failed to fetch book detail', error);
+        ElMessage.error('Failed to load book detail');
       }
     };
 
