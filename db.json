@@ -1,0 +1,103 @@
+{
+  "ebooks": [
+    {
+      "id": 1,
+      "title": "Sapiens: A Brief History of Humankind",
+      "author": "Yuval Noah Harari",
+      "description": "Sapiens explores how Homo sapiens came to dominate the world, from cognitive revolution to modern capitalism.",
+      "coverURL": "https://covers.openlibrary.org/b/id/10583665-L.jpg",
+      "available": true
+    },
+    {
+      "id": 2,
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "description": "An easy & proven way to build good habits and break bad ones, focusing on tiny daily improvements.",
+      "coverURL": "https://covers.openlibrary.org/b/id/10301265-L.jpg",
+      "available": true
+    },
+    {
+      "id": 3,
+      "title": "Thinking, Fast and Slow",
+      "author": "Daniel Kahneman",
+      "description": "Kahneman reveals the two systems that drive the way we think – fast, intuitive thinking, and slow, deliberate thinking.",
+      "coverURL": "https://covers.openlibrary.org/b/id/10583599-L.jpg",
+      "available": false
+    },
+    {
+      "id": 4,
+      "title": "The Pragmatic Programmer",
+      "author": "Andrew Hunt, David Thomas",
+      "description": "A classic book on software engineering and craftsmanship, full of timeless tips and principles for clean code.",
+      "coverURL": "https://covers.openlibrary.org/b/id/11032739-L.jpg",
+      "available": true
+    },
+    {
+      "id": 5,
+      "title": "Educated",
+      "author": "Tara Westover",
+      "description": "A memoir about a woman who grows up in a survivalist family and later escapes to pursue higher education.",
+      "coverURL": "https://covers.openlibrary.org/b/id/9253081-L.jpg",
+      "available": true
+    },
+    {
+      "id": 6,
+      "title": "The Power of Now",
+      "author": "Eckhart Tolle",
+      "description": "A spiritual guide to help you discover your true self and find peace in the present moment.",
+      "coverURL": "https://covers.openlibrary.org/b/id/11107997-L.jpg",
+      "available": true
+    },
+    {
+      "id": 7,
+      "title": "Deep Work",
+      "author": "Cal Newport",
+      "description": "Rules for focused success in a distracted world — how to achieve deep, meaningful work in the age of interruptions.",
+      "coverURL": "https://covers.openlibrary.org/b/id/10082269-L.jpg",
+      "available": true
+    },
+    {
+      "id": 8,
+      "title": "The Subtle Art of Not Giving a F*ck",
+      "author": "Mark Manson",
+      "description": "A counterintuitive approach to living a good life by embracing struggle and letting go of toxic positivity.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8375046-L.jpg",
+      "available": true
+    },
+    {
+      "id": 9,
+      "title": "Can’t Hurt Me",
+      "author": "David Goggins",
+      "description": "A Navy SEAL’s raw autobiography about pushing beyond limits and mastering the mind through pain and challenge.",
+      "coverURL": "https://covers.openlibrary.org/b/id/11226804-L.jpg",
+      "available": true
+    },
+    {
+      "id": 10,
+      "title": "Man’s Search for Meaning",
+      "author": "Viktor E. Frankl",
+      "description": "A Holocaust survivor's lessons on finding meaning in life through suffering and purpose.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8673940-L.jpg",
+      "available": true
+    }
+
+    ],
+    "users": [
+      {
+        "id": 1,
+        "email": "john@example.com",
+        "pssword": "john_doe"
+        
+      }
+    ],
+    "loans": [
+      {
+        "id": 1,
+        "ebook_id": 1,
+        "account_id": 1,
+        "start_date": "2025-04-20",
+        "return_date": null,
+        "status": "active"
+      }
+    ]
+  }

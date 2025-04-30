@@ -3,32 +3,29 @@ import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 
-// 创建 axios 实例
+const isDev = process.env.NODE_ENV === 'development';
+
 const service = axios.create({
-  baseURL: '/api',  // 根据你的项目API前缀，如果有的话
+  baseURL: isDev ? 'http://localhost:3001' : '/api',
   timeout: 5000
 });
 
-// 请求拦截器
+// 请求拦截器（可选，开发阶段暂时注释 token）
 service.interceptors.request.use(
   (config) => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const token = currentUser?.token;
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
+    // const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    // const token = currentUser?.token;
+    // if (token) {
+    //   config.headers['Authorization'] = `Bearer ${token}`;
+    // }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // 响应拦截器
 service.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
+  (response) => response,
   (error) => {
     const status = error.response?.status;
     if (status === 401) {

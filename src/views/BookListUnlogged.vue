@@ -86,7 +86,7 @@
         
       async fetchBooks() {
         try {
-          const response = await request.get('/books');
+          const response = await request.get('/ebooks');
           this.allBooks = response.data;
           this.searchBooks();
         } catch (error) {

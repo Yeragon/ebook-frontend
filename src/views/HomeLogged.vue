@@ -94,8 +94,8 @@ export default {
     return {
       Refresh,//绑定图标
       Search,
-      currentUser: {},
       searchQuery: '',
+      currentUser: {},
       recommendedBooks: [],
       dueSoonList: [],
       classifications: [
@@ -124,7 +124,7 @@ export default {
     },
     async refreshBooks() {
       try {
-        const response = await request.get('/books');
+        const response = await request.get('/ebooks');
         this.recommendedBooks = response.data.sort(() => 0.5 - Math.random()).slice(0, 4);
       } catch (error) {
         console.error('Failed to fetch books', error);
@@ -201,8 +201,11 @@ export default {
 }
 .book-list {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 40px;
+  flex-wrap: nowrap;
+  max-width: 960px;
+  margin: 0 auto;
 }
 .book-card {
   width: 140px;
