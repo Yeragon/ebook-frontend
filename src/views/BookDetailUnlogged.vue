@@ -2,10 +2,13 @@
 <template>
   <div class="book-detail-unlogged">
     <!-- 顶部栏 -->
-    <div class="header">
-      <h1 class="logo" @click="$router.push('/')">Ebooks</h1>
-      <el-button type="primary" @click="$router.push('/login')">Login</el-button>
-    </div>
+    <header class="header">
+      <h1 class="logo">Ebooks</h1>
+      <div class="header-actions">
+        <el-button class="login-button" @click="$router.push('/login')">Login</el-button>
+        <el-avatar icon="el-icon-user" />
+      </div>
+    </header>
 
     <!-- 书籍详情 -->
     <div class="book-info">
@@ -72,20 +75,25 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
 }
-
 .logo {
-  color: #00bcd4;
-  font-family: 'Lucida Handwriting', cursive;
+  font-family: 'Lucida Handwriting', serif;
   font-size: 32px;
-  cursor: pointer;
+  color: #00bcd4;
+  margin: 0;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .book-info {
   display: flex;
   gap: 30px;
   margin-bottom: 30px;
+  margin-top: 50px;
+  margin-left: 40px;
 }
 
 .book-meta {
