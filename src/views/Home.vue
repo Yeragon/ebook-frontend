@@ -82,13 +82,38 @@ export default {
       searchQuery: '',
       recommendedBooks: [],
       classifications: [
-        { name: 'History', count: 2000, img: 'error' },
-        { name: 'Literature', count: 503, img: 'error' },
-        { name: 'Art', count: 893, img: 'error' },
-        { name: 'Biography', count: 6789, img: 'error' },
-        { name: 'Psychology', count: 7514, img: 'error' },
-        { name: 'Sociology', count: 6789, img: 'error' }
-      ]
+      {
+    name: 'History',
+    count: 2000,
+    img: 'https://covers.openlibrary.org/b/id/12380797-L.jpg' // Guns, Germs, and Steel
+  },
+  {
+    name: 'Literature',
+    count: 503,
+    img: 'https://covers.openlibrary.org/b/id/8228691-L.jpg' // To Kill a Mockingbird
+  },
+  {
+    name: 'Art',
+    count: 893,
+    img: 'https://covers.openlibrary.org/b/id/12608803-L.jpg' // The Story of Art by E.H. Gombrich
+  },
+  {
+    name: 'Biography',
+    count: 6789,
+    img: 'https://covers.openlibrary.org/b/id/11153299-L.jpg' // Steve Jobs by Walter Isaacson
+  },
+  {
+    name: 'Psychology',
+    count: 7514,
+    img: 'https://covers.openlibrary.org/b/id/10814439-L.jpg' // The Body Keeps the Score
+  },
+  {
+    name: 'Sociology',
+    count: 6789,
+    img: 'https://covers.openlibrary.org/b/id/11159587-L.jpg' // Outliers by Malcolm Gladwell
+  }
+]
+
     };
   },
   created() {
@@ -208,25 +233,48 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
+
 .classification-card {
+  display: flex;
+  align-items: center;
   background: #f5f5f5;
-  border-radius: 10px;
-  text-align: center;
-  padding: 20px;
+  border-radius: 12px;
   cursor: pointer;
+  padding: 16px;
+  transition: background 0.3s;
+  min-height: 185px;
 }
+
+.classification-card:hover {
+  background: #e0f7fa;
+}
+
 .classification-image {
-  width: 100%;
-  height: 120px;
-  margin-bottom: 10px;
+  width: 150px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 20px;
+  flex-shrink: 0;
 }
+
+.classification-text {
+  flex: 1;
+  text-align: left;
+}
+
 .classification-text strong {
-  font-size: 16px;
+  font-size: 20px;
+  display: block;
+  margin-bottom: 8px;
 }
+
 .classification-text p {
-  font-size: 12px;
-  color: #555;
+  font-size: 11px;
+  color: #666;
 }
+
+
 .image-slot {
   display: flex;
   justify-content: center;

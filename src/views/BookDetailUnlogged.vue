@@ -1,11 +1,14 @@
 <!-- src/views/BookDetailUnlogged.vue -->
 <template>
   <div class="book-detail-unlogged">
-    <!-- 顶部栏 -->
-    <div class="header">
+    <!-- Header -->
+    <header class="header">
       <h1 class="logo" @click="$router.push('/')">Ebooks</h1>
-      <el-button type="primary" @click="$router.push('/login')">Login</el-button>
-    </div>
+      <div class="header-actions">
+        <el-button class="login-button" @click="$router.push('/login')">Login</el-button>
+        <el-avatar icon="el-icon-user" />
+      </div>
+    </header>
 
     <!-- 书籍详情 -->
     <div class="book-info">
@@ -43,7 +46,7 @@ export default {
     const fetchBookDetail = async () => {
       try {
         const bookId = route.params.id;
-        const res = await request.get(`/ebook/${bookId}`);
+        const res = await request.get(`/ebooks/${bookId}`);
         book.value = res.data || {};
       } catch (error) {
         console.error('Failed to fetch book detail', error);
@@ -80,6 +83,11 @@ export default {
   font-family: 'Lucida Handwriting', cursive;
   font-size: 32px;
   cursor: pointer;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .book-info {

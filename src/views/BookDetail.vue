@@ -60,7 +60,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const bookId = route.params.id;
+    //const bookId = route.params.id;
     const book = ref({});
     const comments = ref([]);
     const commentDialogVisible = ref(false);
@@ -70,7 +70,8 @@ export default {
 
     const fetchBookDetail = async () => {
       try {
-        const res = await request.get(`/ebook/${bookId}`);
+        const bookId = route.params.id;
+        const res = await request.get(`/ebooks/${bookId}`);
         book.value = res.data || {};
       } catch (error) {
         console.error('Failed to fetch book detail', error);
@@ -153,7 +154,7 @@ export default {
 .book-detail-container {
   max-width: 1000px;
   margin: auto;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
 .header {
@@ -165,7 +166,7 @@ export default {
 
 .logo {
   color: #00bcd4;
-  font-family: 'Lucida Handwriting', cursive;
+  font-family: 'Lucida Handwriting', serif;
   font-size: 32px;
   cursor: pointer;
 }
