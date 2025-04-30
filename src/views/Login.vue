@@ -56,7 +56,7 @@ export default {
       this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
           try {
-            const res = await request.post('/auth/login', this.form);
+            const res = await request.post('/login', this.form);
             const userData = res.data;
 
             localStorage.setItem('currentUser', JSON.stringify(userData));
