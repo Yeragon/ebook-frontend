@@ -69,7 +69,7 @@ export default {
       this.$refs.resetForm.validate(async (valid) => {
         if (valid) {
           try {
-            await request.post('/auth/resetpassword', {
+            await request.post('/resetpassword', {
               email: this.form.email,
               newPassword: this.form.password
             });

@@ -65,7 +65,7 @@ export default {
       this.$refs.registerForm.validate(async (valid) => {
         if (valid) {
           try {
-            await request.post('/auth/register', {
+            await request.post('/register', {
               email: this.form.email,
               password: this.form.password
             });
