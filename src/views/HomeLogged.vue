@@ -245,7 +245,7 @@ export default {
 }
 .book-image {
   width: 100%;
-  height: 160px;
+  height: 198px;
   border-radius: 10px;
 }
 .book-title {
