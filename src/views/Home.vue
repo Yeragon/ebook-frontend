@@ -144,7 +144,7 @@ export default {
     if (this.searchQuery.trim()) {
       try {
         // 发送请求到后端的搜索接口
-        const response = await request.get('/search/books', {
+        const response = await request.get('/ebooks', {
           params: { query: this.searchQuery.trim() }
         });
         // 将搜索结果保存到 searchResults 中
