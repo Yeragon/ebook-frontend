@@ -7,6 +7,7 @@
       <div class="header-actions">
         <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
         <span class="user-name">{{ currentUser.name || 'User' }}</span>
+        <span class="separator">|</span>
         <el-button type="text" @click="logout">Logout</el-button>
       </div>
     </header>
@@ -206,6 +207,12 @@ export default {
   font-size: 16px;
   font-weight: bold;
 }
+.header-actions .separator {
+  margin: 0 10px;  /* 给竖线两侧添加间距 */
+  font-size: 20px;  /* 调整竖线大小 */
+  color: #ccc;  /* 设置竖线颜色 */
+}
+
 .search-container {
   margin: 30px 0;
   display: flex;

@@ -3,9 +3,15 @@
   <div class="book-detail-container">
     <!-- 顶部导航 -->
     <div class="header">
-      <h1 class="logo" @click="$router.push('/dashboard')">Ebooks</h1>
-      <el-avatar :src="userAvatar" @click="$router.push('/myaccount')" />
-    </div>
+  <h1 class="logo" @click="$router.push('/dashboard')">Ebooks</h1>
+  <div class="header-actions">
+    <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
+    <span class="user-name">{{ currentUser.name || 'User' }}</span>
+    <span class="separator">|</span>
+    <el-button type="text" @click="logout">Logout</el-button>
+  </div>
+</div>
+
 
     <!-- 书籍信息 -->
     <div class="book-info">
@@ -55,8 +61,29 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import request from '@/utils/request';
+import { ElMessage } from 'element-plus';
 
 export default {
+  name: 'BookDetail',
+  data() {
+  return {
+    currentUser: {}
+  };
+},
+created() {
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
+      this.currentUser = JSON.parse(userData);
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem('currentUser');
+      this.$message.success('Logged out successfully!');
+      this.$router.push('/');
+    }
+  },
+
   setup() {
     const router = useRouter();
     const route = useRoute();
@@ -161,7 +188,20 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+.separator {
+  margin: 0 10px;
+  font-size: 20px;
+  color: #ccc;
 }
 
 .logo {

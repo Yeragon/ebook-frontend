@@ -89,13 +89,139 @@
       "coverURL": "https://covers.openlibrary.org/b/id/8673940-L.jpg",
       "available": true,
       "category": "Philosophy"
+    },
+    {
+      "id": 11,
+      "title": "Zero to One",
+      "author": "Peter Thiel",
+      "description": "A guide to building innovative startups that create new value rather than compete in existing markets.",
+      "coverURL": "https://covers.openlibrary.org/b/id/9433872-L.jpg",
+      "available": true,
+      "category": "Business"
+    },
+    {
+      "id": 12,
+      "title": "The Lean Startup",
+      "author": "Eric Ries",
+      "description": "A methodology for creating successful startups through rapid experimentation and validated learning.",
+      "coverURL": "https://covers.openlibrary.org/b/id/7545044-L.jpg",
+      "available": true,
+      "category": "Business"
+    },
+    {
+      "id": 13,
+      "title": "Grit",
+      "author": "Angela Duckworth",
+      "description": "The power of passion and perseverance in achieving success, based on psychological research.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8231990-L.jpg",
+      "available": true,
+      "category": "Psychology"
+    },
+    {
+      "id": 14,
+      "title": "Quiet",
+      "author": "Susan Cain",
+      "description": "A celebration of the strengths of introverts in a world that often favors extroversion.",
+      "coverURL": "https://covers.openlibrary.org/b/id/7884861-L.jpg",
+      "available": true,
+      "category": "Psychology"
+    },
+    {
+      "id": 15,
+      "title": "Hooked",
+      "author": "Nir Eyal",
+      "description": "A look into how products create habit-forming behavior and how to build products that keep users engaged.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8234883-L.jpg",
+      "available": false,
+      "category": "Technology"
+    },
+    {
+      "id": 16,
+      "title": "Drive",
+      "author": "Daniel H. Pink",
+      "description": "Explores what truly motivates people, debunking outdated beliefs about rewards and punishment.",
+      "coverURL": "https://covers.openlibrary.org/b/id/7261101-L.jpg",
+      "available": true,
+      "category": "Psychology"
+    },
+    {
+      "id": 17,
+      "title": "Start with Why",
+      "author": "Simon Sinek",
+      "description": "Leaders inspire action by clearly communicating their purpose and ‘why’ before the ‘what’ or ‘how’.",
+      "coverURL": "https://covers.openlibrary.org/b/id/7301062-L.jpg",
+      "available": true,
+      "category": "Leadership"
+    },
+    {
+      "id": 18,
+      "title": "Outliers",
+      "author": "Malcolm Gladwell",
+      "description": "Examines the factors that contribute to high levels of success, including culture, timing, and opportunity.",
+      "coverURL": "https://covers.openlibrary.org/b/id/6112195-L.jpg",
+      "available": true,
+      "category": "Sociology"
+    },
+    {
+      "id": 19,
+      "title": "The 7 Habits of Highly Effective People",
+      "author": "Stephen R. Covey",
+      "description": "Timeless principles for personal and professional effectiveness and integrity.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8155416-L.jpg",
+      "available": false,
+      "category": "Self-help"
+    },
+    {
+      "id": 20,
+      "title": "The Alchemist",
+      "author": "Paulo Coelho",
+      "description": "A philosophical novel about a shepherd's journey to fulfill his personal legend.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8231855-L.jpg",
+      "available": true,
+      "category": "Fiction"
+    },
+    {
+      "id": 21,
+      "title": "Born a Crime",
+      "author": "Trevor Noah",
+      "description": "A memoir of growing up in apartheid South Africa as a mixed-race child, filled with humor and heart.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8369250-L.jpg",
+      "available": true,
+      "category": "Biography"
+    },
+    {
+      "id": 22,
+      "title": "Open: An Autobiography",
+      "author": "Andre Agassi",
+      "description": "A candid and compelling memoir by tennis legend Andre Agassi, exploring his career, struggles, and personal growth.",
+      "coverURL": "https://covers.openlibrary.org/b/id/6979861-L.jpg",
+      "available": true,
+      "category": "Sports"
+    },
+    {
+      "id": 23,
+      "title": "The Prince",
+      "author": "Niccolò Machiavelli",
+      "description": "A political treatise by Niccolò Machiavelli, offering advice on leadership, power dynamics, and political strategy.",
+      "coverURL": "https://covers.openlibrary.org/b/id/8808255-L.jpg",
+      "available": true,
+      "category": "Philosophy"
+    },
+    {
+      "id": 24,
+      "title": "Meditations",
+      "author": "Marcus Aurelius",
+      "description": "A collection of personal writings by the Roman emperor on Stoic philosophy and self-discipline.",
+      "coverURL": "https://covers.openlibrary.org/b/id/10487932-L.jpg",
+      "available": true,
+      "category": "Philosophy"
     }
   ],
   "users": [
     {
       "id": 1,
       "email": "john@example.com",
-      "pssword": "john_doe"
+      "password": "john_doe"
     }
   ],
   "loans": [
