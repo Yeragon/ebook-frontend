@@ -221,22 +221,39 @@
     {
       "id": "1",
       "email": "admin@mail.com",
-      "password": "admin123456"
+      "password": "admin123456",
+      "wishlist": []
     },
     {
       "id": "294d",
       "email": "123456@mail.com",
-      "password": "1234566"
+      "password": "1234566",
+      "wishlist": []
     },
     {
-      "id": "044f",
-      "email": "ggg@167.com",
-      "password": "ggg167"
-    },
-    {
-      "id": "9c5f",
-      "email": "Stephen@gmail.com",
-      "password": "Stephen"
+      "id": "6033",
+      "email": "666@qq.com",
+      "password": "666666",
+      "wishlist": [
+        {
+          "id": "3",
+          "title": "Thinking, Fast and Slow",
+          "author": "Daniel Kahneman",
+          "description": "Kahneman reveals the two systems that drive the way we think – fast, intuitive thinking, and slow, deliberate thinking.",
+          "coverURL": "https://covers.openlibrary.org/b/id/10583599-L.jpg",
+          "available": false,
+          "category": "Psychology"
+        },
+        {
+          "id": "16",
+          "title": "Drive",
+          "author": "Daniel H. Pink",
+          "description": "Explores what truly motivates people, debunking outdated beliefs about rewards and punishment.",
+          "coverURL": "https://covers.openlibrary.org/b/id/7261101-L.jpg",
+          "available": true,
+          "category": "Psychology"
+        }
+      ]
     }
   ],
   "loans": [
@@ -260,6 +277,30 @@
       "id": "2f6a",
       "ebook_id": "20",
       "account_id": "294d",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "8fdb",
+      "ebook_id": "2",
+      "account_id": "294d",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "b840",
+      "ebook_id": "9",
+      "account_id": "1",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "aac4",
+      "ebook_id": "3",
+      "account_id": "6033",
       "start_date": "02/05/2025",
       "return_date": "01/06/2025",
       "status": "active"

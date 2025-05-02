@@ -204,17 +204,40 @@ created() {
 };
 
 
-    const addToWishlist = async () => {
-      try {
-        await request.post('/wishlist/add', {
-          ebookId: bookId,
-          accountId: userId
-        });
-        ElMessage.success('Added to Wishlist!');
-      } catch (error) {
-        ElMessage.error('Already in Wishlist or failed.');
-      }
-    };
+const addToWishlist = async () => {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const userId = currentUser?.id;
+
+  if (!userId) {
+    ElMessage.warning('Please log in first.');
+    return;
+  }
+
+  try {
+    // 获取用户的 wishlist 数据
+    const { data: user } = await request.get(`/users/${userId}`);
+    
+    // 检查书籍是否已经在 wishlist 中
+    const isInWishlist = user.wishlist.some(item => item.id === book.value.id);
+    if (isInWishlist) {
+      ElMessage.warning('This book is already in your wishlist.');
+      return;
+    }
+
+    // 更新 wishlist
+    const updatedWishlist = [...(user.wishlist || []), book.value];
+
+    await request.patch(`/users/${userId}`, {
+      wishlist: updatedWishlist
+    });
+
+    ElMessage.success('Added to Wishlist!');
+  } catch (error) {
+    ElMessage.error('Failed to add to Wishlist.');
+    console.error(error);
+  }
+};
+
 
     const submitComment = async () => {
       if (!newComment.value.trim()) {

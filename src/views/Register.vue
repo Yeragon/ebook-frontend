@@ -91,7 +91,8 @@ export default {
 
         await request.post('/users', {
           email: this.form.email,
-          password: this.form.password
+          password: this.form.password,
+          wishlist: []  // 初始化 wishlist 为一个空数组
         });
 
         this.$message.success('Registration successful! Please login.');
