@@ -9,12 +9,24 @@
         </el-form-item>
 
         <el-form-item label="New Password" prop="password" class="input-item">
-          <el-input v-model="form.password" type="password" placeholder="Enter new password"></el-input>
-        </el-form-item>
+  <el-input
+    v-model="form.password"
+    type="password"
+    placeholder="Enter your password"
+    show-password
+  ></el-input>
+</el-form-item>
 
-        <el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
-          <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm new password"></el-input>
-        </el-form-item>
+
+<el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
+  <el-input
+    v-model="form.confirmPassword"
+    type="password"
+    placeholder="Enter your password"
+    show-password
+  ></el-input>
+</el-form-item>
+
 
         <div class="form-links">
           <el-link type="primary" @click="$router.push('/login')">Back to Login</el-link>
@@ -53,34 +65,46 @@ export default {
         ],
         confirmPassword: [
           { required: true, message: 'Please confirm your new password', trigger: 'blur' },
-          { validator: (rule, value, callback) => {
-              if (value !== this.form.password) {
-                callback(new Error('Passwords do not match'));
-              } else {
-                callback();
-              }
-            }, trigger: 'blur' }
+          { validator: this.validateConfirmPassword, trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
+    validateConfirmPassword(rule, value, callback) {
+    if (value !== this.form.password) {
+      callback(new Error('Passwords do not match'));
+    } else {
+      callback();
+    }
+  },
+
     submitReset() {
       this.$refs.resetForm.validate(async (valid) => {
-        if (valid) {
-          try {
-            await request.post('/auth/resetpassword', {
-              email: this.form.email,
-              newPassword: this.form.password
-            });
-            this.$message.success('Password reset successful! Please login.');
-            this.$router.push('/login');
-          } catch (error) {
-            console.error('Password reset failed', error);
-            this.$message.error('Reset failed. Please check your email.');
-          }
+    if (valid) {
+      try {
+        // 查找用户是否存在
+        const { data: users } = await request.get(`/users?email=${this.form.email}`);
+        if (users.length === 0) {
+          this.$message.error('No user found with this email.');
+          return;
         }
-      });
+
+        const user = users[0];
+
+        // 更新密码
+        await request.patch(`/users/${user.id}`, {
+          password: this.form.password
+        });
+
+        this.$message.success('Password reset successful! Please login.');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Password reset failed', error);
+        this.$message.error('Reset failed. Please try again.');
+      }
+    }
+  });
     }
   }
 }

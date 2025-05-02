@@ -9,12 +9,28 @@
         </el-form-item>
 
         <el-form-item label="Password" prop="password" class="input-item">
-          <el-input v-model="form.password" type="password" placeholder="Enter your password"></el-input>
-        </el-form-item>
+  <el-input
+    v-model="form.password"
+    type="password"
+    placeholder="Enter your password"
+    show-password
+  ></el-input>
+</el-form-item>
+
 
         <el-form-item label="Confirm Password" prop="confirmPassword" class="input-item">
-          <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm your password"></el-input>
-        </el-form-item>
+  <el-input
+    v-model="form.confirmPassword"
+    type="password"
+    placeholder="Confirm your password"
+    show-password
+  ></el-input>
+</el-form-item>
+
+
+        <div class="form-links">
+          <el-link type="primary" @click="$router.push('/login')">Back to Login</el-link>
+        </div>
 
         <el-form-item>
           <el-button type="primary" class="register-button" @click="submitRegister">Register</el-button>
@@ -49,34 +65,43 @@ export default {
         ],
         confirmPassword: [
           { required: true, message: 'Please confirm your password', trigger: 'blur' },
-          { validator: (rule, value, callback) => {
-              if (value !== this.form.password) {
-                callback(new Error('Passwords do not match'));
-              } else {
-                callback();
-              }
-            }, trigger: 'blur' }
+          { validator: this.validateConfirmPassword, trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
+    validateConfirmPassword(rule, value, callback) {
+    if (value !== this.form.password) {
+      callback(new Error('Passwords do not match'));
+    } else {
+      callback();
+    }
+  },
+
     submitRegister() {
       this.$refs.registerForm.validate(async (valid) => {
-        if (valid) {
-          try {
-            await request.post('/auth/register', {
-              email: this.form.email,
-              password: this.form.password
-            });
-            this.$message.success('Registration successful! Please login.');
-            this.$router.push('/login');
-          } catch (error) {
-            console.error('Registration failed', error);
-            this.$message.error('Registration failed. Please try again.');
-          }
+    if (valid) {
+      try {
+        const { data: existingUsers } = await request.get(`/users?email=${this.form.email}`);
+        if (existingUsers.length > 0) {
+          this.$message.warning('Email is already registered.');
+          return;
         }
-      });
+
+        await request.post('/users', {
+          email: this.form.email,
+          password: this.form.password
+        });
+
+        this.$message.success('Registration successful! Please login.');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Registration failed', error);
+        this.$message.error('Registration failed. Please try again.');
+      }
+    }
+  });
     }
   }
 }
@@ -113,6 +138,11 @@ export default {
 
 .input-item {
   text-align: left;
+}
+
+.form-links {
+  margin: 20px 0;
+  text-align: center;
 }
 
 .register-button {

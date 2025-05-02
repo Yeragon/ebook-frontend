@@ -3,7 +3,7 @@
     <!-- 顶部 -->
     <header class="header">
       <h1 class="logo" @click="goHome">Ebooks</h1>
-      <el-button :icon="moneyIcon" circle style="border: none; cursor: pointer;"></el-button>
+      <el-button :icon="moneyIcon" circle style="border: none;  cursor: pointer;" @click="goToTopUp"/>
     </header>
 
     <div class="content">
@@ -94,11 +94,12 @@
     <el-table-column label="Comment" align="center">
       <template #default="scope">
         <el-button
-          icon="el-icon-chat-line-round"
-          circle
-          size="small"
-          @click="commentBook(scope.row)"
-        ></el-button>
+  :icon="chatIcon"
+  circle
+  size="small"
+  @click="commentBook(scope.row)"
+></el-button>
+
       </template>
     </el-table-column>
   </el-table>
@@ -111,6 +112,8 @@
 <script>
 import { h } from 'vue';
 import { Money } from '@element-plus/icons-vue'
+import { ChatLineRound } from '@element-plus/icons-vue';
+
 
 export default {
   name: 'MyAccount',
@@ -136,6 +139,7 @@ export default {
       onLoanList: [],
       dueSoonList: [],
       moneyIcon: h(Money),
+      chatIcon: h(ChatLineRound),
     };
   },
   created() {
@@ -170,6 +174,9 @@ export default {
     },
     goToEdit() {
       this.$router.push('/editpage');
+    },
+    goToTopUp(){
+      this.$router.push('/topup');
     },
     toggleFavorite(book) {
       book.favorite = !book.favorite;
@@ -227,15 +234,21 @@ this.$message.success(`You loaned "${book.title}" successfully!`);
     const data = localStorage.getItem('onLoanBooks');
     this.onLoanList = data ? JSON.parse(data) : [];
     },
+    
     commentBook(book) {
-    this.$message.success(`You clicked comment on "${book.title}"!`);
+    this.$router.push({
+    name: 'BookDetail',
+    params: { id: book.id },
+    query: { showComment: 'true' }
+    });
     },
+
 
     loadDueSoon() {
   const allBooks = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
   const today = new Date();
   const sevenDaysLater = new Date();
-  sevenDaysLater.setDate(today.getDate() + 7);
+  sevenDaysLater.setDate(today.getDate() + 30);
 
   const parseDate = (str) => {
     const [day, month, year] = str.split('/');

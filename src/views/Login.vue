@@ -9,8 +9,14 @@
         </el-form-item>
 
         <el-form-item label="Password" prop="password" class="input-item">
-          <el-input v-model="form.password" type="password" placeholder="Enter your password"></el-input>
-        </el-form-item>
+  <el-input
+    v-model="form.password"
+    type="password"
+    placeholder="Enter your password"
+    show-password
+  ></el-input>
+</el-form-item>
+
 
         <div class="form-links">
           <el-link type="primary" @click="$router.push('/resetpassword')">Forgot Password?</el-link>
@@ -54,20 +60,25 @@ export default {
   methods: {
     submitLogin() {
       this.$refs.loginForm.validate(async (valid) => {
-        if (valid) {
-          try {
-            const res = await request.post('/auth/login', this.form);
-            const userData = res.data;
+    if (valid) {
+      try {
+        // 模拟登录：通过 GET 请求过滤用户
+        const res = await request.get(`/users?email=${this.form.email}&password=${this.form.password}`);
+        const user = res.data[0];
 
-            localStorage.setItem('currentUser', JSON.stringify(userData));
-            this.$message.success('Login successful!');
-            this.$router.push('/dashboard');
-          } catch (error) {
-            console.error('Login failed', error);
-            this.$message.error('Login failed. Please check your credentials.');
-          }
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.$message.success('Login successful!');
+          this.$router.push('/dashboard');
+        } else {
+          this.$message.error('Login failed. Please check your credentials.');
         }
-      });
+      } catch (error) {
+        console.error('Login error', error);
+        this.$message.error('Something went wrong.');
+      }
+    }
+  });
     }
   }
 }

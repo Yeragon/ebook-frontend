@@ -1,7 +1,7 @@
 {
   "ebooks": [
     {
-      "id": 1,
+      "id": "1",
       "title": "Sapiens: A Brief History of Humankind",
       "author": "Yuval Noah Harari",
       "description": "Sapiens explores how Homo sapiens came to dominate the world, from cognitive revolution to modern capitalism.",
@@ -10,7 +10,7 @@
       "category": "History"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Atomic Habits",
       "author": "James Clear",
       "description": "An easy & proven way to build good habits and break bad ones, focusing on tiny daily improvements.",
@@ -19,7 +19,7 @@
       "category": "Psychology"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Thinking, Fast and Slow",
       "author": "Daniel Kahneman",
       "description": "Kahneman reveals the two systems that drive the way we think – fast, intuitive thinking, and slow, deliberate thinking.",
@@ -28,7 +28,7 @@
       "category": "Psychology"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "The Pragmatic Programmer",
       "author": "Andrew Hunt, David Thomas",
       "description": "A classic book on software engineering and craftsmanship, full of timeless tips and principles for clean code.",
@@ -37,7 +37,7 @@
       "category": "Technology"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Educated",
       "author": "Tara Westover",
       "description": "A memoir about a woman who grows up in a survivalist family and later escapes to pursue higher education.",
@@ -46,7 +46,7 @@
       "category": "Biography"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "The Power of Now",
       "author": "Eckhart Tolle",
       "description": "A spiritual guide to help you discover your true self and find peace in the present moment.",
@@ -55,7 +55,7 @@
       "category": "Philosophy"
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "Deep Work",
       "author": "Cal Newport",
       "description": "Rules for focused success in a distracted world — how to achieve deep, meaningful work in the age of interruptions.",
@@ -64,7 +64,7 @@
       "category": "Productivity"
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "The Subtle Art of Not Giving a F*ck",
       "author": "Mark Manson",
       "description": "A counterintuitive approach to living a good life by embracing struggle and letting go of toxic positivity.",
@@ -73,7 +73,7 @@
       "category": "Self-help"
     },
     {
-      "id": 9,
+      "id": "9",
       "title": "Can’t Hurt Me",
       "author": "David Goggins",
       "description": "A Navy SEAL’s raw autobiography about pushing beyond limits and mastering the mind through pain and challenge.",
@@ -82,7 +82,7 @@
       "category": "Biography"
     },
     {
-      "id": 10,
+      "id": "10",
       "title": "Man’s Search for Meaning",
       "author": "Viktor E. Frankl",
       "description": "A Holocaust survivor's lessons on finding meaning in life through suffering and purpose.",
@@ -91,7 +91,7 @@
       "category": "Philosophy"
     },
     {
-      "id": 11,
+      "id": "11",
       "title": "Zero to One",
       "author": "Peter Thiel",
       "description": "A guide to building innovative startups that create new value rather than compete in existing markets.",
@@ -100,7 +100,7 @@
       "category": "Business"
     },
     {
-      "id": 12,
+      "id": "12",
       "title": "The Lean Startup",
       "author": "Eric Ries",
       "description": "A methodology for creating successful startups through rapid experimentation and validated learning.",
@@ -109,7 +109,7 @@
       "category": "Business"
     },
     {
-      "id": 13,
+      "id": "13",
       "title": "Grit",
       "author": "Angela Duckworth",
       "description": "The power of passion and perseverance in achieving success, based on psychological research.",
@@ -118,7 +118,7 @@
       "category": "Psychology"
     },
     {
-      "id": 14,
+      "id": "14",
       "title": "Quiet",
       "author": "Susan Cain",
       "description": "A celebration of the strengths of introverts in a world that often favors extroversion.",
@@ -127,7 +127,7 @@
       "category": "Psychology"
     },
     {
-      "id": 15,
+      "id": "15",
       "title": "Hooked",
       "author": "Nir Eyal",
       "description": "A look into how products create habit-forming behavior and how to build products that keep users engaged.",
@@ -136,7 +136,7 @@
       "category": "Technology"
     },
     {
-      "id": 16,
+      "id": "16",
       "title": "Drive",
       "author": "Daniel H. Pink",
       "description": "Explores what truly motivates people, debunking outdated beliefs about rewards and punishment.",
@@ -145,7 +145,7 @@
       "category": "Psychology"
     },
     {
-      "id": 17,
+      "id": "17",
       "title": "Start with Why",
       "author": "Simon Sinek",
       "description": "Leaders inspire action by clearly communicating their purpose and ‘why’ before the ‘what’ or ‘how’.",
@@ -154,7 +154,7 @@
       "category": "Leadership"
     },
     {
-      "id": 18,
+      "id": "18",
       "title": "Outliers",
       "author": "Malcolm Gladwell",
       "description": "Examines the factors that contribute to high levels of success, including culture, timing, and opportunity.",
@@ -163,7 +163,7 @@
       "category": "Sociology"
     },
     {
-      "id": 19,
+      "id": "19",
       "title": "The 7 Habits of Highly Effective People",
       "author": "Stephen R. Covey",
       "description": "Timeless principles for personal and professional effectiveness and integrity.",
@@ -172,7 +172,7 @@
       "category": "Self-help"
     },
     {
-      "id": 20,
+      "id": "20",
       "title": "The Alchemist",
       "author": "Paulo Coelho",
       "description": "A philosophical novel about a shepherd's journey to fulfill his personal legend.",
@@ -181,7 +181,7 @@
       "category": "Fiction"
     },
     {
-      "id": 21,
+      "id": "21",
       "title": "Born a Crime",
       "author": "Trevor Noah",
       "description": "A memoir of growing up in apartheid South Africa as a mixed-race child, filled with humor and heart.",
@@ -190,7 +190,7 @@
       "category": "Biography"
     },
     {
-      "id": 22,
+      "id": "22",
       "title": "Open: An Autobiography",
       "author": "Andre Agassi",
       "description": "A candid and compelling memoir by tennis legend Andre Agassi, exploring his career, struggles, and personal growth.",
@@ -199,7 +199,7 @@
       "category": "Sports"
     },
     {
-      "id": 23,
+      "id": "23",
       "title": "The Prince",
       "author": "Niccolò Machiavelli",
       "description": "A political treatise by Niccolò Machiavelli, offering advice on leadership, power dynamics, and political strategy.",
@@ -208,7 +208,7 @@
       "category": "Philosophy"
     },
     {
-      "id": 24,
+      "id": "24",
       "title": "Meditations",
       "author": "Marcus Aurelius",
       "description": "A collection of personal writings by the Roman emperor on Stoic philosophy and self-discipline.",
@@ -219,18 +219,57 @@
   ],
   "users": [
     {
-      "id": 1,
-      "email": "john@example.com",
-      "password": "john_doe"
+      "id": "1",
+      "email": "admin@mail.com",
+      "password": "admin123456"
+    },
+    {
+      "id": "294d",
+      "email": "123456@mail.com",
+      "password": "1234566"
+    },
+    {
+      "id": "044f",
+      "email": "ggg@167.com",
+      "password": "ggg167"
+    },
+    {
+      "id": "9c5f",
+      "email": "Stephen@gmail.com",
+      "password": "Stephen"
     }
   ],
   "loans": [
     {
-      "id": 1,
+      "id": "1",
       "ebook_id": 1,
-      "account_id": 1,
+      "account_id": null,
       "start_date": "2025-04-20",
       "return_date": null,
+      "status": "active"
+    },
+    {
+      "id": "bffb",
+      "ebook_id": "7",
+      "account_id": "1",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "650c",
+      "ebook_id": "22",
+      "account_id": "1",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "55aa",
+      "ebook_id": "18",
+      "account_id": "1",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
       "status": "active"
     }
   ]

@@ -76,7 +76,25 @@ created() {
       this.currentUser = JSON.parse(userData);
     }
   },
+
+  mounted() {
+    console.log('Route query:', this.$route.query);
+  if (this.$route.query.showComment === 'true') {
+    this.openCommentDialog();
+  }
+},
+
   methods: {
+    openCommentDialog() {
+    this.showCommentModal = true; // 控制你的弹窗显示
+    // 删除 ?showComment=true，避免再次打开
+    this.$router.replace({ 
+      name: this.$route.name, 
+      params: this.$route.params, 
+      query: {} 
+    });
+  },
+
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
@@ -115,16 +133,74 @@ created() {
     };
 
     const loanBook = async () => {
-      try {
-        await request.post('/loan/borrow', {
-          ebookId: bookId,
-          accountId: userId
-        });
-        ElMessage.success('Successfully loaned this book!');
-      } catch (error) {
-        ElMessage.error('Loan failed.');
-      }
+  try {
+    const bookId = book.value.id;  // 获取当前书籍的 ID
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));  // 获取当前用户的 ID
+    const userId = currentUser?.id;  // 获取当前用户的 ID
+
+    // 检查 userId 是否有效
+    if (!userId) {
+      ElMessage.error('User is not logged in or userId is missing!');
+      return;
+    }
+
+    // 1. 检查用户是否已借阅此书且未归还
+    const userLoans = await request.get(`/loans?account_id=${userId}`);
+    const existingLoan = userLoans.data.find(loan => loan.ebook_id === bookId && loan.status === 'active');
+    if (existingLoan) {
+      ElMessage.warning('You have already borrowed this book and not returned it yet!');
+      return;
+    }
+
+    // 2. 检查用户借阅的书籍数量是否已达到 10 本
+    const activeLoansCount = userLoans.data.filter(loan => loan.status === 'active').length;
+    if (activeLoansCount >= 10) {
+      ElMessage.warning('You can only borrow up to 10 books at a time!');
+      return;
+    }
+
+    // 获取当前日期并格式化为 dd/mm/yyyy 格式
+    const startDate = new Date();
+    const startDateStr = `${startDate.getDate().toString().padStart(2, '0')}/${(startDate.getMonth() + 1).toString().padStart(2, '0')}/${startDate.getFullYear()}`;
+
+    // 计算归还日期：借书日起 30 天
+    const returnDate = new Date(startDate);
+    returnDate.setDate(startDate.getDate() + 30);  // 加 30 天
+    const returnDateStr = `${returnDate.getDate().toString().padStart(2, '0')}/${(returnDate.getMonth() + 1).toString().padStart(2, '0')}/${returnDate.getFullYear()}`;
+
+    // 创建借阅记录，包含书籍 ID 和用户 ID，以及当前时间作为借阅开始时间和计算出的归还时间
+    const loanData = {
+      ebook_id: bookId,
+      account_id: userId,
+      start_date: startDateStr,  // 设置借书日期
+      return_date: returnDateStr,  // 设置计算出的归还日期
+      status: 'active'  // 设置借阅状态为 'active'
     };
+
+    // 发送 POST 请求到 /loans，将借阅信息保存到 db.json 中
+    const res = await request.post('/loans', loanData);
+
+    if (res.status === 200 || res.status === 201) {
+      ElMessage.success('Successfully loaned this book!');
+
+      // 保存借阅的书籍到本地存储
+      let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+      allOnLoan.push({
+        ...book.value,
+        rentalStartDate: startDateStr,
+        expirationDate: returnDateStr,
+      });
+      localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+
+    } else {
+      ElMessage.error('Loan failed.');
+    }
+  } catch (error) {
+    ElMessage.error('An error occurred while borrowing the book.');
+    console.error('Error:', error);
+  }
+};
+
 
     const addToWishlist = async () => {
       try {

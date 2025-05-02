@@ -3,7 +3,12 @@
     <!-- 顶部导航 -->
     <div class="header">
       <h1 class="logo" @click="$router.push('/dashboard')">Ebooks</h1>
-      <el-avatar :src="userAvatar" @click="$router.push('/account')" />
+      <el-button 
+        circle 
+        @click="$router.go(-1)" 
+        style="border: none; cursor: pointer;">
+        <el-icon><ArrowLeft /></el-icon>
+        </el-button>
     </div>
 
     <!-- 充值表单 -->
@@ -12,11 +17,11 @@
 
       <el-form :model="form" label-position="top">
         <el-form-item label="Amount (£)">
-          <el-input-number v-model="form.amount" :min="1" :max="1000" style="width: 100%;"></el-input-number>
+          <el-input-number v-model="form.amount" :min="0" :max="1000" style="width: 100%;"></el-input-number>
         </el-form-item>
 
         <div class="form-actions">
-          <el-button type="success" @click="handleTopUp">Top Up Now</el-button>
+          <el-button type="success" @click="handleTopUp">Top Up</el-button>
         </div>
       </el-form>
     </el-card>
@@ -27,12 +32,20 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import request from '@/utils/request';
+import { ElIcon } from 'element-plus';
+import { ArrowLeft } from '@element-plus/icons-vue';
 
 export default {
+  component: {
+    components: {
+      ElIcon,
+      ArrowLeft
+    }
+  },
   setup() {
     const router = useRouter();
     const form = ref({
-      amount: 10
+      amount: 0
     });
     const userAvatar = ref('https://via.placeholder.com/100');
 
@@ -47,7 +60,7 @@ export default {
         const res = await request.get(`/api/payment/horsepayurl?userId=${userId}&amount=${form.value.amount}`);
         const paymentUrl = res.data.url;
         if (paymentUrl) {
-          window.location.href = paymentUrl; // 跳转到支付页面
+          window.location.href = paymentUrl; 
         } else {
           ElMessage.error('Failed to get payment URL.');
         }

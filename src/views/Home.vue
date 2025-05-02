@@ -132,12 +132,9 @@ export default {
       this.$router.push({ path: `/category/${categoryName}` });
     },
     goBookDetail(bookId) {
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        this.$router.push(`/bookdetail/${bookId}`);
-      } else {
+      
         this.$router.push(`/bookdetailunlogged/${bookId}`);
-      }
+      
     },
 
     async searchBooks() {

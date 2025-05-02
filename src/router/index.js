@@ -17,6 +17,7 @@ import Category from '@/views/Category.vue';
 import EditPage from '@/views/EditPage.vue';
 import BookList from '@/views/BookList.vue';
 import BookListUnlogged from '@/views/BookListUnlogged.vue';
+import TopUp from '@/views/TopUp.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -34,6 +35,7 @@ const routes = [
   { path: '/editpage', name: 'EditPage', component: EditPage },
   { path: '/booklist/:keyword', name: 'BookList', component: BookList },
   { path: '/booklistunlogged/:keyword', name: 'BookListUnlogged', component: BookListUnlogged },
+  { path: '/topup', name: 'TopUp', component: TopUp },
   // 兜底处理：访问不存在的路径，自动跳转回首页
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
