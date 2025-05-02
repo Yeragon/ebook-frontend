@@ -35,6 +35,8 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus'; 
+
 import request from '@/utils/request';
 
 export default {
@@ -47,9 +49,17 @@ export default {
       try {
         const bookId = route.params.id;
         const res = await request.get(`/ebook/${bookId}`);
-        book.value = res.data || {};
+        // 检查返回的数据是否看起来像是合法图书
+        if (res.coverURL) {
+          book.value = res;
+        } else {
+          ElMessage.warning('Book not found or invalid data.');
+          await router.push('/');
+        }
       } catch (error) {
         console.error('Failed to fetch book detail', error);
+        ElMessage.error('Failed to load book data.');
+        await router.push('/');
       }
     };
 
