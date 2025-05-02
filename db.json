@@ -258,14 +258,6 @@
   ],
   "loans": [
     {
-      "id": "1",
-      "ebook_id": 1,
-      "account_id": null,
-      "start_date": "2025-04-20",
-      "return_date": null,
-      "status": "active"
-    },
-    {
       "id": "ba68",
       "ebook_id": "20",
       "account_id": "1",
@@ -300,6 +292,78 @@
     {
       "id": "aac4",
       "ebook_id": "3",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "3d52",
+      "ebook_id": "11",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "56f9",
+      "ebook_id": "7",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "9386",
+      "ebook_id": "1",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "de20",
+      "ebook_id": "16",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "0608",
+      "ebook_id": "18",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "6d3a",
+      "ebook_id": "22",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "9eba",
+      "ebook_id": "13",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "2d39",
+      "ebook_id": "2",
+      "account_id": "6033",
+      "start_date": "02/05/2025",
+      "return_date": "01/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "951e",
+      "ebook_id": "12",
       "account_id": "6033",
       "start_date": "02/05/2025",
       "return_date": "01/06/2025",

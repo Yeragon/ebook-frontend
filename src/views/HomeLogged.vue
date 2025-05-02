@@ -55,11 +55,31 @@
         <el-button type="text" @click="$router.push('/duesoon')">View all →</el-button>
       </div>
       <el-table :data="dueSoonList" border style="width: 100%">
-        <el-table-column prop="bookTitle" label="Book Title" />
-        <el-table-column prop="author" label="Author" />
-        <el-table-column prop="startDate" label="Start Date" />
-        <el-table-column prop="dueDate" label="Due Date" />
-      </el-table>
+  <el-table-column
+    prop="title"
+    label="Book"
+    align="center"
+    label-class-name="table-header"
+  />
+  <el-table-column
+    prop="author"
+    label="Author"
+    align="center"
+    label-class-name="table-header"
+  />
+  <el-table-column
+    prop="rentalStartDate"
+    label="Rental Start Date"
+    align="center"
+    label-class-name="table-header"
+  />
+  <el-table-column
+    prop="expirationDate"
+    label="Expiration Date"
+    align="center"
+    label-class-name="table-header"
+  />
+</el-table>
     </section>
 
     <!-- Classifications -->
@@ -155,14 +175,36 @@ export default {
         console.error('Failed to fetch books', error);
       }
     },
-    async fetchDueSoon() {
-      try {
-        const response = await request.get('/loans/duesoon');
-        this.dueSoonList = response.data || [];
-      } catch (error) {
-        console.error('Failed to fetch due soon loans', error);
-      }
-    },
+    
+    fetchDueSoon() {
+  const userData = localStorage.getItem('currentUser');
+  if (!userData) return;
+
+  const user = JSON.parse(userData);
+  const key = `onLoanBooks_${user.id}`;
+  const allBooks = JSON.parse(localStorage.getItem(key)) || [];
+
+  const today = new Date();
+  const thirtyDaysLater = new Date();
+  thirtyDaysLater.setDate(today.getDate() + 30);
+
+  const parseDate = (str) => {
+    const [day, month, year] = str.split('/');
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  };
+
+  this.dueSoonList = allBooks.filter(book => {
+    const dueDate = parseDate(book.expirationDate);
+    return dueDate >= today && dueDate <= thirtyDaysLater;
+  }).map(book => ({
+    title: book.title,
+    author: book.author,
+    rentalStartDate: book.rentalStartDate,
+    expirationDate: book.expirationDate
+  }))
+    .sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)) // 排序，按到期日升序
+    .slice(0, 5); // 只取最近的5本书
+  },
     goBookDetail(bookId) {
       this.$router.push(`/bookdetail/${bookId}`);
     },
@@ -255,6 +297,11 @@ export default {
 .book-author {
   font-size: 12px;
   color: #666;
+}
+
+::v-deep(.table-header) {
+  color: black;
+  text-align: center;
 }
 
 .classification-grid {

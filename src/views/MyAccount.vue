@@ -325,6 +325,12 @@ returnBook(book) {
   margin: 20px auto;
 }
 
+.el-table {
+  max-height: 400px; /* 设置最大高度 */
+  overflow-y: auto;  /* 内容溢出时启用垂直滚动 */
+  margin-top: 10px;
+}
+
 .tabs {
   margin-top: 20px;
   background: white;
