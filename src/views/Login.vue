@@ -56,12 +56,12 @@ export default {
       this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
           try {
-            const res = await request.post('/login', this.form);
-            const userData = res.data;
+            const userData = await request.post('/login', this.form);
 
             localStorage.setItem('currentUser', JSON.stringify(userData));
-            this.$message.success('Login successful!');
+            this.$message.success(userData.message || 'Login successful!');
             this.$router.push('/dashboard');
+
           } catch (error) {
             console.error('Login failed', error);
             this.$message.error('Login failed. Please check your credentials.');
