@@ -128,6 +128,7 @@ export default {
         balance: 0,
         avatar: ''
       },
+      userId: '',
       profileFields: {
         email: { label: 'E-mail:' },
         fullName: { label: 'Full Name:' },
@@ -146,6 +147,7 @@ export default {
     const userData = localStorage.getItem('currentUser');
     if (userData) {
       const user = JSON.parse(userData);
+      this.userId = user.id || ''; // ✅ 保存 userId
       this.user = {
         email: user.email,
         fullName: user.name || '',
@@ -184,55 +186,60 @@ export default {
     loanBook(book) {
 
       // 先获取当前借阅书籍列表
-  let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+      const userKey = `onLoanBooks_${this.userId}`; // ✅ 使用 userId 创建键名
 
-// 检查是否已借满 10 本
-if (allOnLoan.length >= 10) {
-  this.$message.error('You cannot loan more than 10 books at a time.');
-  return; // 阻止继续执行借书流程
-}
+      // 获取当前用户的借阅书籍列表
+      let allOnLoan = JSON.parse(localStorage.getItem(userKey)) || [];
+
+      // 检查是否已借满 10 本
+      if (allOnLoan.length >= 10) {
+      this.$message.error('You cannot loan more than 10 books at a time.');
+      return; 
+      }
 
        // 获取当前日期
-  const currentDate = new Date();
+       const currentDate = new Date();
 
-// 设置借书的到期日期为当前日期加 30 天
-const expirationDate = new Date(currentDate);
-expirationDate.setDate(currentDate.getDate() + 30);
+      // 设置借书的到期日期为当前日期加 30 天
+      const expirationDate = new Date(currentDate);
+      expirationDate.setDate(currentDate.getDate() + 30);
 
-// 将日期格式化为 dd/mm/yyyy
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
+      // 将日期格式化为 dd/mm/yyyy
+      const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); 
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+      };
 
-// 设置开始和结束日期（格式为 dd/mm/yyyy）
-book.rentalStartDate = formatDate(currentDate);
-book.expirationDate = formatDate(expirationDate);
 
-// 保存到本地存储（更新 onLoanBooks 列表）
-allOnLoan.push(book);
-localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+      book.rentalStartDate = formatDate(currentDate);
+      book.expirationDate = formatDate(expirationDate);
 
-// 更新 DUE Soon 列表
-this.loadDueSoon();
+      // 保存到本地存储（更新 onLoanBooks 列表）
+      allOnLoan.push(book);
+      localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+
+      // 更新 DUE Soon 列表
+      this.loadDueSoon();
       
-this.$message.success(`You loaned "${book.title}" successfully!`);
-      // 这里可以加实际借书逻辑
+      this.$message.success(`You loaned "${book.title}" successfully!`);
+   
     },
     loadWishlist() {
-      const data = localStorage.getItem('wishlistBooks');
-      this.wishlist = data ? JSON.parse(data) : [];
-    },
-    saveWishlist() {
-      const favoriteBooks = this.wishlist.filter(book => book.favorite !== false);
-      localStorage.setItem('wishlistBooks', JSON.stringify(favoriteBooks));
-    },
+  const data = localStorage.getItem(`wishlistBooks_${this.userId}`);
+  this.wishlist = data ? JSON.parse(data) : [];
+},
+
+saveWishlist() {
+  const favoriteBooks = this.wishlist.filter(book => book.favorite !== false);
+  localStorage.setItem(`wishlistBooks_${this.userId}`, JSON.stringify(favoriteBooks));
+},
+
 
     loadOnLoan() {
-    const data = localStorage.getItem('onLoanBooks');
-    this.onLoanList = data ? JSON.parse(data) : [];
+      const data = localStorage.getItem(`onLoanBooks_${this.userId}`);
+      this.onLoanList = data ? JSON.parse(data) : [];
     },
     
     commentBook(book) {
@@ -245,30 +252,34 @@ this.$message.success(`You loaned "${book.title}" successfully!`);
 
 
     loadDueSoon() {
-  const allBooks = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
-  const today = new Date();
-  const sevenDaysLater = new Date();
-  sevenDaysLater.setDate(today.getDate() + 30);
+      const allBooks = JSON.parse(localStorage.getItem(`onLoanBooks_${this.userId}`)) || [];
+      const today = new Date();
+      const sevenDaysLater = new Date();
+      sevenDaysLater.setDate(today.getDate() + 30);
 
-  const parseDate = (str) => {
+    const parseDate = (str) => {
     const [day, month, year] = str.split('/');
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-  };
+    };
 
-  this.dueSoonList = allBooks.filter(book => {
-    const dueDate = parseDate(book.expirationDate);
-    return dueDate >= today && dueDate <= sevenDaysLater;
-  });
-},
+    this.dueSoonList = allBooks.filter(book => {
+      const dueDate = parseDate(book.expirationDate);
+      return dueDate >= today && dueDate <= sevenDaysLater;
+    });
+   },
 returnBook(book) {
   this.$message.success(`You have returned "${book.title}" successfully!`);
   // 从本地 onLoanBooks 中移除这本书
   const updated = this.dueSoonList.filter(b => b.title !== book.title);
-  this.dueSoonList = updated;
+  const key = `onLoanBooks_${this.userId}`;
 
-  let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+  // 删除 from dueSoonList
+  this.dueSoonList = this.dueSoonList.filter(b => b.title !== book.title);
+  
+  // 删除 from localStorage
+  let allOnLoan = JSON.parse(localStorage.getItem(key)) || [];
   allOnLoan = allOnLoan.filter(b => b.title !== book.title);
-  localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+  localStorage.setItem(key, JSON.stringify(allOnLoan));
 
   this.loadOnLoan(); // 加这一行以同步 onLoanList
 

@@ -183,14 +183,16 @@ created() {
     if (res.status === 200 || res.status === 201) {
       ElMessage.success('Successfully loaned this book!');
 
-      // 保存借阅的书籍到本地存储
-      let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+      const localKey = `onLoanBooks_${userId}`;
+      let allOnLoan = JSON.parse(localStorage.getItem(localKey)) || [];
+
       allOnLoan.push({
-        ...book.value,
-        rentalStartDate: startDateStr,
-        expirationDate: returnDateStr,
-      });
-      localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
+      ...book.value,
+      rentalStartDate: startDateStr,
+      expirationDate: returnDateStr,
+    });
+      localStorage.setItem(localKey, JSON.stringify(allOnLoan));
+
 
     } else {
       ElMessage.error('Loan failed.');
