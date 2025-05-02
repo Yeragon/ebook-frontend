@@ -203,7 +203,6 @@ created() {
   }
 };
 
-
 const addToWishlist = async () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   const userId = currentUser?.id;
@@ -214,18 +213,16 @@ const addToWishlist = async () => {
   }
 
   try {
-    // 获取用户的 wishlist 数据
     const { data: user } = await request.get(`/users/${userId}`);
-    
-    // 检查书籍是否已经在 wishlist 中
-    const isInWishlist = user.wishlist.some(item => item.id === book.value.id);
+    const wishlist = user.wishlist || [];
+
+    const isInWishlist = wishlist.some(item => item.id === book.value.id);
     if (isInWishlist) {
       ElMessage.warning('This book is already in your wishlist.');
       return;
     }
 
-    // 更新 wishlist
-    const updatedWishlist = [...(user.wishlist || []), book.value];
+    const updatedWishlist = [...wishlist, { ...book.value }];
 
     await request.patch(`/users/${userId}`, {
       wishlist: updatedWishlist
@@ -237,6 +234,7 @@ const addToWishlist = async () => {
     console.error(error);
   }
 };
+
 
 
     const submitComment = async () => {
