@@ -125,7 +125,9 @@ export default {
     async refreshBooks() {
       try {
         const response = await request.get('/books');
-        this.recommendedBooks = response.data.sort(() => 0.5 - Math.random()).slice(0, 4);
+    this.recommendedBooks = Array.isArray(response)
+      ? response.sort(() => 0.5 - Math.random()).slice(0, 4)
+      : [];
       } catch (error) {
         console.error('Failed to fetch books', error);
       }
