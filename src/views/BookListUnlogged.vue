@@ -39,10 +39,6 @@
             <div class="book-info">
               <p class="book-title">{{ book.title }}</p>
               <p class="book-author">{{ book.author }}</p>
-              <p class="book-meta">
-                推荐值 {{ book.rating || 'N/A' }}
-                <span v-if="book.tags"> • {{ book.tags.join(', ') }}</span>
-              </p>
             </div>
             <div class="book-actions">
               <el-tag size="mini" type="info">{{ book.borrowCount || 0 }}</el-tag>
@@ -87,7 +83,7 @@
       async fetchBooks() {
         try {
           const response = await request.get('/books');
-          this.allBooks = response.data;
+          this.allBooks = response;
           this.searchBooks();
         } catch (error) {
           console.error('Failed to fetch books', error);

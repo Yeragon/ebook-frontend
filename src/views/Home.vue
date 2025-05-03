@@ -71,7 +71,8 @@
 
 <script>
 import request from '@/utils/request';
-import { Search, Refresh } from '@element-plus/icons-vue' // 引入图标
+import { Search, Refresh } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 
 export default {
   name: 'Home',
@@ -82,12 +83,36 @@ export default {
       searchQuery: '',
       recommendedBooks: [],
       classifications: [
-        { name: 'History', count: 2000, img: 'error' },
-        { name: 'Literature', count: 503, img: 'error' },
-        { name: 'Art', count: 893, img: 'error' },
-        { name: 'Biography', count: 6789, img: 'error' },
-        { name: 'Psychology', count: 7514, img: 'error' },
-        { name: 'Sociology', count: 6789, img: 'error' }
+      {
+    name: 'History',
+    count: 2000,
+    img: 'https://covers.openlibrary.org/b/id/12380797-L.jpg' // Guns, Germs, and Steel
+  },
+  {
+    name: 'Literature',
+    count: 503,
+    img: 'https://covers.openlibrary.org/b/id/8228691-L.jpg' // To Kill a Mockingbird
+  },
+  {
+    name: 'Art',
+    count: 893,
+    img: 'https://covers.openlibrary.org/b/id/12608803-L.jpg' // The Story of Art by E.H. Gombrich
+  },
+  {
+    name: 'Biography',
+    count: 6789,
+    img: 'https://covers.openlibrary.org/b/id/11153299-L.jpg' // Steve Jobs by Walter Isaacson
+  },
+  {
+    name: 'Psychology',
+    count: 7514,
+    img: 'https://covers.openlibrary.org/b/id/10814439-L.jpg' // The Body Keeps the Score
+  },
+  {
+    name: 'Sociology',
+    count: 6789,
+    img: 'https://covers.openlibrary.org/b/id/11159587-L.jpg' // Outliers by Malcolm Gladwell
+  }
       ]
     };
   },
@@ -110,13 +135,9 @@ export default {
       this.$router.push({ path: `/category/${categoryName}` });
     },
     goBookDetail(bookId) {
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        this.$router.push(`/bookdetail/${bookId}`);
-      } else {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
-      }
-    },
+      },
+    
 
     async searchBooks() {
     if (this.searchQuery.trim()) {
@@ -126,12 +147,12 @@ export default {
           params: { query: this.searchQuery.trim() }
         });
         // 将搜索结果保存到 searchResults 中
-        this.searchResults = response.data;
+        this.searchResults = response;
 
         // 跳转到搜索结果页面，并将搜索的关键词传递过去
         this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
       } catch (error) {
-        this.$message.error('Search failed, please try again.');
+        ElMessage.error('Search failed, please try again.');
       }
     } else {
       this.$message.warning('Please enter a keyword.');
@@ -182,8 +203,11 @@ export default {
 }
 .book-list {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 40px;
+  flex-wrap: nowrap;
+  max-width: 960px;
+  margin: 0 auto;
 }
 .book-card {
   width: 140px;
@@ -192,7 +216,7 @@ export default {
 }
 .book-image {
   width: 100%;
-  height: 160px;
+  height: 198px;
   border-radius: 10px;
 }
 .book-title {
@@ -209,23 +233,38 @@ export default {
   gap: 20px;
 }
 .classification-card {
+  display: flex;
+  align-items: center;
   background: #f5f5f5;
-  border-radius: 10px;
-  text-align: center;
-  padding: 20px;
+  border-radius: 12px;
   cursor: pointer;
+  padding: 16px;
+  transition: background 0.3s;
+  min-height: 185px;
+}
+.classification-card:hover {
+  background: #e0f7fa;
 }
 .classification-image {
-  width: 100%;
-  height: 120px;
-  margin-bottom: 10px;
+  width: 150px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+.classification-text {
+  flex: 1;
+  text-align: left;
 }
 .classification-text strong {
-  font-size: 16px;
+  font-size: 20px;
+  display: block;
+  margin-bottom: 8px;
 }
 .classification-text p {
-  font-size: 12px;
-  color: #555;
+  font-size: 11px;
+  color: #666;
 }
 .image-slot {
   display: flex;
@@ -245,7 +284,7 @@ export default {
 .section-title-with-icon {
   display: flex;
   align-items: center;
-  gap: 8px; /* 控制标题和图标的间距 */
+  gap: 8px; 
 }
 
 .refresh-icon {
