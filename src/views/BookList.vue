@@ -6,6 +6,7 @@
         <div class="header-actions">
           <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
           <span class="user-name">{{ currentUser.name || 'User' }}</span>
+          <span class="separator">|</span>
           <el-button type="text" @click="logout">Logout</el-button>
         </div>
       </header>
@@ -40,10 +41,6 @@
             <div class="book-info">
               <p class="book-title">{{ book.title }}</p>
               <p class="book-author">{{ book.author }}</p>
-              <p class="book-meta">
-                推荐值 {{ book.rating || 'N/A' }}
-                <span v-if="book.tags"> • {{ book.tags.join(', ') }}</span>
-              </p>
             </div>
             <div class="book-actions">
               <el-tag size="mini" type="info">{{ book.borrowCount || 0 }}</el-tag>
@@ -103,7 +100,7 @@
       async fetchBooks() {
         try {
           const response = await request.get('/books');
-          this.allBooks = response.data;
+          this.allBooks = response;
           this.searchBooks();
         } catch (error) {
           console.error('Failed to fetch books', error);
@@ -148,6 +145,11 @@
   .user-name {
     font-size: 16px;
     font-weight: bold;
+  }
+  .header-actions .separator {
+  margin: 0 10px;  
+  font-size: 20px;  
+  color: #ccc;  
   }
   .search-container {
     margin: 30px 0;

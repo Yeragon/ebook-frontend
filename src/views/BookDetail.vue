@@ -1,13 +1,18 @@
 <!-- src/views/BookDetail.vue -->
 <template>
   <div class="book-detail-container">
-    <!-- 顶部导航 -->
+    <!-- Header -->
     <div class="header">
       <h1 class="logo" @click="$router.push('/dashboard')">Ebooks</h1>
-      <el-avatar :src="userAvatar" @click="$router.push('/myaccount')" />
+      <div class="header-actions">
+    <el-avatar :src="currentUser.avatar || ''" icon="el-icon-user" style="cursor: pointer;" @click="$router.push('/myaccount')" />
+    <span class="user-name">{{ currentUser.name || 'User' }}</span>
+    <span class="separator">|</span>
+    <el-button type="text" @click="logout">Logout</el-button>
+  </div>
     </div>
 
-    <!-- 书籍信息 -->
+    <!-- Book Info -->
     <div class="book-info">
       <el-image :src="book.coverURL" style="width: 200px; height: 300px;"></el-image>
       <div class="book-meta">
@@ -55,8 +60,47 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import request from '@/utils/request';
+import { ElMessage } from 'element-plus';
 
 export default {
+  name: 'BookDetail',
+  data() {
+  return {
+    currentUser: {}
+  };
+},
+created() {
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
+      this.currentUser = JSON.parse(userData);
+    }
+  },
+
+  mounted() {
+    console.log('Route query:', this.$route.query);
+  if (this.$route.query.showComment === 'true') {
+    this.openCommentDialog();
+  }
+},
+
+  methods: {
+    openCommentDialog() {
+    this.showCommentModal = true; // 控制你的弹窗显示
+    // 删除 ?showComment=true，避免再次打开
+    this.$router.replace({ 
+      name: this.$route.name, 
+      params: this.$route.params, 
+      query: {} 
+    });
+  },
+
+    logout() {
+      localStorage.removeItem('currentUser');
+      this.$message.success('Logged out successfully!');
+      this.$router.push('/');
+    }
+  },
+
   setup() {
     const router = useRouter();
     const route = useRoute();
@@ -69,26 +113,24 @@ export default {
     const userId = JSON.parse(localStorage.getItem('currentUser'))?.userId;
 
     const fetchBookDetail = async () => {
-      try {
-        const res = await request.get(`/ebook/${bookId}`);
-        book.value = res.data;
-        if (res?.coverURL) {
-      book.value = res;
-    } else if (res?.data?.coverURL) {
-      book.value = res.data;
+  try {
+    const res = await request.get(`/ebook/${bookId}`);
+    const data = res.data || res; // 兼容有无 `.data`
+    if (data?.coverURL) {
+      book.value = data;
     } else {
       ElMessage.warning('Book not found or invalid data.');
       router.push('/');
     }
-      } catch (error) {
-        console.error('Failed to fetch book detail', error);
-      }
-    };
+  } catch (error) {
+    console.error('Failed to fetch book detail', error);
+  }
+};
 
     const fetchComments = async () => {
       try {
         const res = await request.get(`/review/list?ebookId=${bookId}`);
-        comments.value = res.data || [];
+        comments.value = res || [];
       } catch (error) {
         console.error('Failed to fetch comments', error);
       }
@@ -161,7 +203,7 @@ export default {
 .book-detail-container {
   max-width: 1000px;
   margin: auto;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
 .header {
@@ -170,10 +212,23 @@ export default {
   align-items: center;
   margin-bottom: 30px;
 }
-
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+.separator {
+  margin: 0 10px;
+  font-size: 20px;
+  color: #ccc;
+}
 .logo {
   color: #00bcd4;
-  font-family: 'Lucida Handwriting', cursive;
+  font-family: 'Lucida Handwriting', serif;
   font-size: 32px;
   cursor: pointer;
 }
