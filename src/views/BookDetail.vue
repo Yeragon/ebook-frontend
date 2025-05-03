@@ -71,7 +71,15 @@ export default {
     const fetchBookDetail = async () => {
       try {
         const res = await request.get(`/ebook/${bookId}`);
-        book.value = res.data || {};
+        book.value = res.data;
+        if (res?.coverURL) {
+      book.value = res;
+    } else if (res?.data?.coverURL) {
+      book.value = res.data;
+    } else {
+      ElMessage.warning('Book not found or invalid data.');
+      router.push('/');
+    }
       } catch (error) {
         console.error('Failed to fetch book detail', error);
       }
