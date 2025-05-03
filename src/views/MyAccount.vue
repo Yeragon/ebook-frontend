@@ -11,7 +11,7 @@
       <el-avatar size="large" class="avatar" :src="user.avatar || ''"></el-avatar>
 
       <!-- Tabs区域 -->
-      <el-tabs v-model="activeTab" class="tabs" @tab-change="saveWishlist">
+      <el-tabs v-model="activeTab" class="tabs" @tab-click="handleTabClick">
         <!-- Profile 页 -->
         <el-tab-pane label="Profile" name="profile">
           <el-form :model="user" label-width="150px" class="profile-form">
@@ -53,12 +53,9 @@
             </el-table-column>
             <el-table-column label="Favorite" align="center">
               <template #default="scope">
-                <el-button
-                  :style="{ color: scope.row.favorite ? 'red' : '#ccc' }"
-                  icon="el-icon-heart"
-                  circle
-                  @click="toggleFavorite(scope.row)"
-                ></el-button>
+                <el-button @click="toggleFavorite(scope.row)" class="star-button">
+                 <span class="star-icon" :style="{ color: scope.row.tempFavorite ? '#f7c843' : '#ccc' }"></span>
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -113,6 +110,8 @@
 import { h } from 'vue';
 import { Money } from '@element-plus/icons-vue'
 import { ChatLineRound } from '@element-plus/icons-vue';
+import { StarFilled } from '@element-plus/icons-vue';
+import axios from 'axios';
 
 
 export default {
@@ -141,6 +140,7 @@ export default {
       dueSoonList: [],
       moneyIcon: h(Money),
       chatIcon: h(ChatLineRound),
+      starIcon: h(StarFilled),
     };
   },
   created() {
@@ -156,13 +156,14 @@ export default {
         avatar: user.avatar || ''
       };
     }
+    console.log('Loaded userId:', this.userId); // 确认 userId 是否加载正确
     this.loadWishlist();
     this.loadOnLoan();
     this.loadDueSoon();
   },
   computed: {
     filteredWishlist() {
-      return this.wishlist.filter(book => book.favorite !== false);
+      return this.wishlist;
     }
   },
   methods: {
@@ -181,66 +182,155 @@ export default {
       this.$router.push('/topup');
     },
     toggleFavorite(book) {
-      book.favorite = !book.favorite;
+      book.tempFavorite = !book.tempFavorite;
+      // 这里调用 saveWishlist 来更新后端
+      this.saveWishlist();
     },
-    loanBook(book) {
 
-      // 先获取当前借阅书籍列表
-      const userKey = `onLoanBooks_${this.userId}`; // ✅ 使用 userId 创建键名
+    handleTabClick(tab) {
+  if (tab.name === 'duesoon') {
+    this.loadDueSoon();
+  } else if (tab.name === 'onloan') {
+    this.loadOnLoan();
+  } else if (tab.name === 'wishlist') {
+    this.loadWishlist();
+  }
+},
 
-      // 获取当前用户的借阅书籍列表
-      let allOnLoan = JSON.parse(localStorage.getItem(userKey)) || [];
+    async loanBook(book) {
+  try {
+    const userData = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = userData?.id;
+    if (!userId) {
+      this.$message.error('User not logged in!');
+      return;
+    }
 
-      // 检查是否已借满 10 本
-      if (allOnLoan.length >= 10) {
+    // 获取用户当前借阅记录
+    const res = await this.$axios.get(`/loans?account_id=${userId}`);
+    const existingLoan = res.data.find(loan => loan.ebook_id === book.id && loan.status === 'active');
+
+    if (existingLoan) {
+      this.$message.warning('You have already borrowed this book and not returned it yet!');
+      return;
+    }
+
+    // 检查是否超过借阅限制
+    const activeLoans = res.data.filter(loan => loan.status === 'active');
+    if (activeLoans.length >= 10) {
       this.$message.error('You cannot loan more than 10 books at a time.');
-      return; 
+      return;
+    }
+
+    // 设置借阅起止日期
+    const today = new Date();
+    const expirationDate = new Date();
+    expirationDate.setDate(today.getDate() + 30);
+
+    const formatDate = (date) => {
+      const d = new Date(date);
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    };
+
+    // 提交借阅记录到后端
+    const loanPayload = {
+      account_id: userId,
+      ebook_id: book.id,
+      start_date: formatDate(today),
+      return_date: formatDate(expirationDate),
+      status: 'active'
+    };
+
+    await this.$axios.post('/loans', loanPayload);
+    this.$message.success(`You loaned "${book.title}" successfully!`);
+
+    // 更新 onLoanList 和 dueSoonList
+    this.loadOnLoan();
+    this.loadDueSoon();
+  } catch (error) {
+    console.error('Loan book failed:', error);
+    this.$message.error('Failed to loan book.');
+  }
+},
+    async loadWishlist() {
+      try {
+    const res = await this.$axios.get(`/users/${this.userId}`);
+    this.wishlist = (res.data.wishlist || []).map(book => ({
+      ...book,
+      tempFavorite: book.favorite  // 初始化临时收藏状态
+    }));
+    } catch (error) {
+    console.error('Failed to load wishlist from server', error);
+    this.wishlist = [];
+    }
+  },
+
+    async saveWishlist() {
+  try {
+    // 调试输出 userId 是否存在
+    console.log('Saving wishlist for userId:', this.userId);
+    
+    if (!this.userId) {
+      this.$message.error('User ID is missing!');
+      return; // 如果没有 userId，提前返回，避免发送请求
+    }
+
+    const updatedFavorites = this.wishlist
+      .filter(book => book.tempFavorite)
+      .map(book => ({ id: book.id, title: book.title })); // 最小化数据发送
+
+      if (updatedFavorites.length === 0) {
+        console.log('No favorites to update');
+        return; // 如果没有收藏项需要更新，直接返回
       }
 
-       // 获取当前日期
-       const currentDate = new Date();
+      console.log('Updating wishlist with the following data:', updatedFavorites);  // 调试信息
 
-      // 设置借书的到期日期为当前日期加 30 天
-      const expirationDate = new Date(currentDate);
-      expirationDate.setDate(currentDate.getDate() + 30);
+    const response = await axios.patch(`/users/${this.userId}`, {
+      wishlist: updatedFavorites
+    });
 
-      // 将日期格式化为 dd/mm/yyyy
-      const formatDate = (date) => {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); 
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
+    // 检查返回的响应
+    console.log('Response from the server:', response);
+
+    if (response.status === 200) {
+      this.$message.success('Wishlist saved!');
+    } else {
+      throw new Error('Failed to update wishlist: Unexpected response');
+    }
+  } catch (error) {
+    console.error('Error saving wishlist:', error);  // 输出详细错误信息
+    this.$message.error('Failed to update wishlist.');
+  }
+},
+
+async loadOnLoan() {
+  try {
+    const res = await this.$axios.get(`/loans?account_id=${this.userId}&status=active`);
+    const loanData = res.data;
+
+    // 假设每本书都带有 title/author，如果没有需要额外请求 book 数据
+    const bookPromises = loanData.map(async (loan) => {
+      const bookRes = await this.$axios.get(`/ebooks/${loan.ebook_id}`);
+      return {
+        id: loan.ebook_id,
+        title: bookRes.data.title,
+        author: bookRes.data.author,
+        rentalStartDate: loan.start_date,  // 根据字段名
+        expirationDate:  loan.return_date     // 根据字段名
       };
+    });
 
+    const booksOnLoan = await Promise.all(bookPromises);
+    this.onLoanList = booksOnLoan;
 
-      book.rentalStartDate = formatDate(currentDate);
-      book.expirationDate = formatDate(expirationDate);
-
-      // 保存到本地存储（更新 onLoanBooks 列表）
-      allOnLoan.push(book);
-      localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
-
-      // 更新 DUE Soon 列表
-      this.loadDueSoon();
-      
-      this.$message.success(`You loaned "${book.title}" successfully!`);
-   
-    },
-    loadWishlist() {
-  const data = localStorage.getItem(`wishlistBooks_${this.userId}`);
-  this.wishlist = data ? JSON.parse(data) : [];
+    // 可选：更新 localStorage 缓存（用于 dueSoon）
+    localStorage.setItem(`onLoanBooks_${this.userId}`, JSON.stringify(booksOnLoan));
+  } catch (error) {
+    console.error('Failed to load on-loan books:', error);
+    this.onLoanList = [];
+  }
 },
-
-saveWishlist() {
-  const favoriteBooks = this.wishlist.filter(book => book.favorite !== false);
-  localStorage.setItem(`wishlistBooks_${this.userId}`, JSON.stringify(favoriteBooks));
-},
-
-
-    loadOnLoan() {
-      const data = localStorage.getItem(`onLoanBooks_${this.userId}`);
-      this.onLoanList = data ? JSON.parse(data) : [];
-    },
     
     commentBook(book) {
     this.$router.push({
@@ -267,25 +357,46 @@ saveWishlist() {
       return dueDate >= today && dueDate <= sevenDaysLater;
     });
    },
-returnBook(book) {
-  this.$message.success(`You have returned "${book.title}" successfully!`);
-  // 从本地 onLoanBooks 中移除这本书
-  const updated = this.dueSoonList.filter(b => b.title !== book.title);
-  const key = `onLoanBooks_${this.userId}`;
+    
+   async returnBook(book) {
+  try {
+    const userData = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = userData?.id;
+    if (!userId) {
+      this.$message.error('User not logged in!');
+      return;
+    }
 
-  // 删除 from dueSoonList
-  this.dueSoonList = this.dueSoonList.filter(b => b.title !== book.title);
-  
-  // 删除 from localStorage
-  let allOnLoan = JSON.parse(localStorage.getItem(key)) || [];
-  allOnLoan = allOnLoan.filter(b => b.title !== book.title);
-  localStorage.setItem(key, JSON.stringify(allOnLoan));
+    // 查询当前用户的 loan 记录
+    const res = await this.$axios.get(`/loans?account_id=${userId}`);
+    const matchedLoan = res.data.find(
+      loan => loan.ebook_id === book.id && loan.status === 'active'
+    );
 
-  this.loadOnLoan(); // 加这一行以同步 onLoanList
+    if (!matchedLoan) {
+      this.$message.warning('Loan record not found.');
+      return;
+    }
 
-  // 更新 DUE Soon 列表
-  this.loadDueSoon();
+    // 删除该 loan 记录
+    await this.$axios.delete(`/loans/${matchedLoan.id}`);
+    this.$message.success(`You have returned "${book.title}" successfully!`);
+
+    // 更新 localStorage 中 onLoanBooks
+    const key = `onLoanBooks_${userId}`;
+    let allOnLoan = JSON.parse(localStorage.getItem(key)) || [];
+    allOnLoan = allOnLoan.filter(b => b.id !== book.id);  // 注意使用 book.id
+    localStorage.setItem(key, JSON.stringify(allOnLoan));
+
+    // 重新加载列表
+    this.loadOnLoan();
+    this.loadDueSoon();
+  } catch (error) {
+    console.error('Error returning book:', error);
+    this.$message.error('Failed to return book.');
+  }
 }
+
   }
 }
 </script>
@@ -354,6 +465,22 @@ returnBook(book) {
   margin-top: 30px;
   color: #999;
   font-size: 18px;
+}
+
+.star-button {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.star-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  background-color: currentColor;
 }
 </style>
 
