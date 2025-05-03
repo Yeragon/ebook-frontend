@@ -3,7 +3,7 @@
   <div class="book-detail-unlogged">
     <!-- 顶部栏 -->
     <header class="header">
-      <h1 class="logo">Ebooks</h1>
+      <h1 class="logo" @click="$router.push('/')">Ebooks</h1>
       <div class="header-actions">
         <el-button class="login-button" @click="$router.push('/login')">Login</el-button>
         <el-avatar icon="el-icon-user" />
@@ -91,6 +91,7 @@ export default {
   font-size: 32px;
   color: #00bcd4;
   margin: 0;
+  cursor: pointer;
 }
 .header-actions {
   display: flex;
