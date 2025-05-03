@@ -136,6 +136,7 @@ export default {
         balance: { label: 'Balance(£):' }
       },
       wishlist: [],
+      wishlistModified: {}, // 用于记录用户是否点击过取消收藏
       onLoanList: [],
       dueSoonList: [],
       moneyIcon: h(Money),
@@ -181,13 +182,17 @@ export default {
     goToTopUp(){
       this.$router.push('/topup');
     },
+    
     toggleFavorite(book) {
-      book.tempFavorite = !book.tempFavorite;
-      // 这里调用 saveWishlist 来更新后端
-      this.saveWishlist();
-    },
+  book.tempFavorite = !book.tempFavorite;
+  // 临时记录点击行为，但不提交后端
+  this.wishlistModified[book.id] = !book.tempFavorite; // true 表示“待删除”
+},
 
     handleTabClick(tab) {
+  if(tab.name !=='wishlist'){
+    this.processWishlistChanges();
+  }
   if (tab.name === 'duesoon') {
     this.loadDueSoon();
   } else if (tab.name === 'onloan') {
@@ -196,6 +201,53 @@ export default {
     this.loadWishlist();
   }
 },
+
+async processWishlistChanges() {
+  const booksToRemove = Object.entries(this.wishlistModified)
+    .filter(([_, toRemove]) => toRemove) // 只找 tempFavorite 被取消的书
+    .map(([id]) => id);
+
+  if (booksToRemove.length === 0) return;
+
+  try {
+    for (const bookId of booksToRemove) {
+      await this.$axios.patch(`/users/${this.userId}/wishlist`, {
+        ebook_id: bookId,
+        favorite: false
+      });
+    }
+
+    this.$message.success('Removed books from wishlist.');
+    this.loadWishlist(); // 重新加载数据
+  } catch (error) {
+    console.error('Failed to remove books:', error);
+    this.$message.error('Failed to update wishlist.');
+  }
+
+  this.wishlistModified = {}; // 清除缓存记录
+},
+
+async removeFromWishlist(book) {
+  try {
+    const res = await this.$axios.get(`/users/${this.userId}`);
+    const currentWishlist = res.data.wishlist || [];
+
+    const updatedWishlist = currentWishlist.filter(item => item.id !== book.id);
+
+    await this.$axios.patch(`/users/${this.userId}`, {
+      wishlist: updatedWishlist
+    });
+
+    // 更新本地列表（UI 同步）
+    this.wishlist = this.wishlist.filter(item => item.id !== book.id);
+
+    this.$message.success(`Removed "${book.title}" from wishlist.`);
+  } catch (error) {
+    console.error('Failed to remove from wishlist:', error);
+    this.$message.error('Failed to remove book from wishlist.');
+  }
+},
+
 
     async loanBook(book) {
   try {

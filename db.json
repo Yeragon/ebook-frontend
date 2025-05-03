@@ -236,13 +236,13 @@
       "password": "666666",
       "wishlist": [
         {
-          "id": "3",
-          "title": "Thinking, Fast and Slow",
-          "author": "Daniel Kahneman",
-          "description": "Kahneman reveals the two systems that drive the way we think – fast, intuitive thinking, and slow, deliberate thinking.",
-          "coverURL": "https://covers.openlibrary.org/b/id/10583599-L.jpg",
-          "available": false,
-          "category": "Psychology"
+          "id": "24",
+          "title": "Meditations",
+          "author": "Marcus Aurelius",
+          "description": "A collection of personal writings by the Roman emperor on Stoic philosophy and self-discipline.",
+          "coverURL": "https://covers.openlibrary.org/b/id/10487932-L.jpg",
+          "available": true,
+          "category": "Philosophy"
         },
         {
           "id": "16",
@@ -252,6 +252,15 @@
           "coverURL": "https://covers.openlibrary.org/b/id/7261101-L.jpg",
           "available": true,
           "category": "Psychology"
+        },
+        {
+          "id": "20",
+          "title": "The Alchemist",
+          "author": "Paulo Coelho",
+          "description": "A philosophical novel about a shepherd's journey to fulfill his personal legend.",
+          "coverURL": "https://covers.openlibrary.org/b/id/8231855-L.jpg",
+          "available": true,
+          "category": "Fiction"
         }
       ]
     }
@@ -301,6 +310,70 @@
       "id": "999a",
       "account_id": "6033",
       "ebook_id": "16",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "0424",
+      "account_id": "6033",
+      "ebook_id": "10",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "6ff1",
+      "ebook_id": "13",
+      "account_id": "6033",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "be54",
+      "ebook_id": "14",
+      "account_id": "6033",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "aedc",
+      "ebook_id": "15",
+      "account_id": "6033",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "c96b",
+      "ebook_id": "2",
+      "account_id": "6033",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "a042",
+      "ebook_id": "3",
+      "account_id": "6033",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "162f",
+      "ebook_id": "6",
+      "account_id": "6033",
+      "start_date": "03/05/2025",
+      "return_date": "02/06/2025",
+      "status": "active"
+    },
+    {
+      "id": "edbd",
+      "ebook_id": "7",
+      "account_id": "6033",
       "start_date": "03/05/2025",
       "return_date": "02/06/2025",
       "status": "active"
