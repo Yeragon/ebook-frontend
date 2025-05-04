@@ -146,39 +146,23 @@ created() {
       return;
     }
 
-    const { data: existingLoans } = await request.get(`/loans?account_id=${userId}&ebook_id=${bookId}&status=active`);
-    if (existingLoans.length > 0) {
-      ElMessage.warning('You have already borrowed this book.');
-      return;
-    }
+    const res = await request.post('/loan', {
+      userId,
+      ebookId: bookId
+    });
 
-    const { data: allActiveLoans } = await request.get(`/loans?account_id=${userId}&status=active`);
-    if (allActiveLoans.length >= 10) {
-      ElMessage.warning('Maximum 10 active loans allowed.');
-      return;
-    }
-
-    const now = new Date();
-    const startDate = now.toLocaleDateString('en-GB');
-    const returnDate = new Date(now.setDate(now.getDate() + 30)).toLocaleDateString('en-GB');
-
-    const loanData = {
-      ebook_id: bookId,
-      account_id: userId,
-      start_date: startDate,
-      return_date: returnDate,
-      status: 'active'
-    };
-
-    const res = await request.post('/loans', loanData);
-    if (res.status === 200 ) {
+    if (res.status === 200) {
       ElMessage.success('Book loaned successfully!');
     } else {
-      ElMessage.error('Loan failed.');
+      ElMessage.error('Failed to loan book.');
     }
   } catch (error) {
-    console.error(error);
-    ElMessage.error('An error occurred while processing loan.');
+    console.error('Loan error:', error);
+    if (error.response?.status === 400) {
+      ElMessage.warning(error.response.data.message || 'Loan rejected.');
+    } else {
+      ElMessage.error('An error occurred while processing loan.');
+    }
   }
 };
 
