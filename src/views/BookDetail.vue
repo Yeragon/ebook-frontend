@@ -167,9 +167,9 @@ created() {
 };
 
 const addToWishlist = async () => {
-  try {
+
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userId = currentUser?.id;
+    const userId = currentUser?.userId;
 
     if (!userId) {
       ElMessage.warning('Please log in to use wishlist.');
@@ -178,46 +178,50 @@ const addToWishlist = async () => {
 
     const wishlistItem = {
       userId,
-      ebookId: bookId,
-      favorite: true
+      ebookId: bookId
     };
 
     const res = await request.post('/wishlist/add', wishlistItem);
-    if (res.status === 200) {
-      ElMessage.success('Added to wishlist!');
-    } else {
-      ElMessage.error('Failed to add to wishlist.');
-    }
+    if (res.code === 200) {
+  ElMessage.success(res.data.message || 'Success!');
+} else {
+  ElMessage.warning(res.data.message || 'Something went wrong');
+}
+
+};
+
+
+const submitComment = async () => {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const userId = currentUser?.userId;
+
+  if (!userId) {
+    ElMessage.warning('Please log in before commenting.');
+    return;
+  }
+
+  if (!newComment.value.trim()) {
+    ElMessage.warning('Please enter a comment.');
+    return;
+  }
+
+  try {
+    await request.post('/review/add', {
+      userId,                // ✅ 添加 userId
+      ebookId: bookId,
+      rating: 5,
+      content: newComment.value   // ✅ 修正字段名为 content，确保和后端对应
+    });
+
+    ElMessage.success('Comment added!');
+    commentDialogVisible.value = false;
+    newComment.value = '';
+    fetchComments();
   } catch (error) {
-    if (error.response?.status === 409) {
-      // 假设后端返回 409 冲突表示已存在
-      ElMessage.warning('This book is already in your wishlist.');
-    } else {
-      console.error(error);
-      ElMessage.error('An error occurred while adding to wishlist.');
-    }
+    ElMessage.error('Failed to submit comment.');
   }
 };
 
-    const submitComment = async () => {
-      if (!newComment.value.trim()) {
-        ElMessage.warning('Please enter a comment.');
-        return;
-      }
-      try {
-        await request.post('/review/add', {
-          ebookId: bookId,
-          rating: 5,
-          comment: newComment.value
-        });
-        ElMessage.success('Comment added!');
-        commentDialogVisible.value = false;
-        newComment.value = '';
-        fetchComments();
-      } catch (error) {
-        ElMessage.error('Failed to submit comment.');
-      }
-    };
 
     onMounted(() => {
       fetchBookDetail();
