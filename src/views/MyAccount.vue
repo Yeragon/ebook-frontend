@@ -121,9 +121,7 @@ export default {
     ElIconChatLineRound,
   },
   data() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     return {
-      userId: currentUser?.userId || null ,
       activeTab: 'profile',
       user: {
         email: '',
@@ -165,7 +163,11 @@ export default {
   computed: {
     filteredWishlist() {
       return this.wishlist.filter(book => book.favorite !== false);
-    }
+    },
+    userId() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    return user?.id || user?.userId || null;
+  }
   },
   methods: {
     goHome() {
