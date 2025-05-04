@@ -102,8 +102,6 @@ created() {
   },
 
   setup() {
-    import { ElMessage } from 'element-plus';
-
     const router = useRouter();
     const route = useRoute();
     const bookId = route.params.id;
