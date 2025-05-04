@@ -150,10 +150,11 @@ created() {
       ebookId: bookId
     });
 
-    if (res.status === 200) {
-      ElMessage.success('Book loaned successfully!');
+    if (res.data.code === 200) {
+      ElMessage.success(res.data.message || 'Success!');
     } else {
-      ElMessage.error('Failed to loan book.');
+      ElMessage.warning(res.data.message || 'Failed to loan book.');
+
     }
 };
 
@@ -173,7 +174,7 @@ const addToWishlist = async () => {
     };
 
     const res = await request.post('/wishlist/add', wishlistItem);
-    if (res.code === 200) {
+    if (res.data.code === 200) {
   ElMessage.success(res.data.message || 'Success!');
 } else {
   ElMessage.warning(res.data.message || 'Something went wrong');
