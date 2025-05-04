@@ -187,7 +187,7 @@ export default {
       return;
     }
 
-    const data = await request.post('/loan', {
+    const data = await request.post('/loan/borrow', {
       userId,
       ebookId: book.id
     });

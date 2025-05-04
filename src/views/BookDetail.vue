@@ -146,7 +146,7 @@ created() {
       return;
     }
 
-    const res = await request.post('/loan', {
+    const res = await request.post('/loan/borrow', {
       userId,
       ebookId: bookId
     });
