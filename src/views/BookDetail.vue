@@ -176,26 +176,26 @@ const addToWishlist = async () => {
       return;
     }
 
-    const { data: existingItems } = await request.get(`/wishlist?account_id=${userId}&ebook_id=${bookId}`);
-    if (existingItems.length > 0) {
-      ElMessage.warning('This book is already in your wishlist.');
-      return;
-    }
-
     const wishlistItem = {
-      account_id: userId,
-      ebook_id: bookId
+      userId,
+      ebookId: bookId,
+      favorite: true
     };
 
-    const res = await request.post('/wishlist', wishlistItem);
-    if (res.status === 200 || res.status === 201) {
+    const res = await request.post('/wishlist/add', wishlistItem);
+    if (res.status === 200) {
       ElMessage.success('Added to wishlist!');
     } else {
       ElMessage.error('Failed to add to wishlist.');
     }
   } catch (error) {
-    console.error(error);
-    ElMessage.error('An error occurred while adding to wishlist.');
+    if (error.response?.status === 409) {
+      // 假设后端返回 409 冲突表示已存在
+      ElMessage.warning('This book is already in your wishlist.');
+    } else {
+      console.error(error);
+      ElMessage.error('An error occurred while adding to wishlist.');
+    }
   }
 };
 
