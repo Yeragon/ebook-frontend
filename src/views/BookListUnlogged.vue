@@ -27,8 +27,12 @@
       <!-- Search Results -->
       <section class="section">
         <h2>Search Results for: "{{ keyword }}"</h2>
-        <el-card v-if="filteredBooks.length === 0" class="no-result">No books found.</el-card>
-  
+        <el-card v-if="filteredBooks.length === 0" class="no-result">
+        <div>
+          <p>😢 Sorry, no book found with the name "<strong>{{ keyword }}</strong>".</p>
+          <p>Please try other key words</p>
+        </div>
+        </el-card>  
         <div class="result-list" v-else>
           <div v-for="book in filteredBooks" :key="book.id" class="result-card" @click="goBookDetail(book.id)">
             <el-image :src="book.coverURL" fit="cover" class="book-image">
@@ -56,25 +60,28 @@
   
   export default {
      
-    name: 'BookList',
+    name: 'BookListUnlogged',
     data() {
       return {
         Search,
-        currentUser: {},
         keyword: '',
-        allBooks: [],
         filteredBooks: []
       };
     },
     created() {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        this.currentUser = JSON.parse(userData);
-      }
-  
-      this.keyword = this.$route.params.keyword || '';
-      this.fetchBooks();
+     this.keyword = this.$route.params.keyword || '';
+     this.fetchBooks();
     },
+
+    watch: {
+  '$route.params.keyword': {
+    immediate: true,
+    handler(newKeyword) {
+      this.keyword = newKeyword;
+      this.fetchBooks();
+    }
+  }
+},
     methods: {
       goHome() {
         this.$router.push('/');
@@ -82,19 +89,22 @@
         
       async fetchBooks() {
         try {
-          const response = await request.get('/books');
-          this.allBooks = response;
-          this.searchBooks();
+          const response = await request.get('/search/books', {
+          params: { query: this.keyword.trim() }
+          });
+          this.filteredBooks = response;
+
         } catch (error) {
           console.error('Failed to fetch books', error);
         }
       },
       searchBooks() {
-        const kw = this.keyword.toLowerCase();
-        this.filteredBooks = this.allBooks.filter(book =>
-          book.title.toLowerCase().includes(kw) ||
-          book.author.toLowerCase().includes(kw)
-        );
+        if (!this.keyword.trim()) {
+        this.$message.warning('Please enter a keyword.');
+        return;
+        }
+        this.$router.push(`/booklistunlogged/${this.keyword.trim()}`);
+
       },
       goBookDetail(bookId) {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
