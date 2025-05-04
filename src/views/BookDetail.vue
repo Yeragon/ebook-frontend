@@ -137,9 +137,8 @@ created() {
     };
 
     const loanBook = async () => {
-  try {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userId = currentUser?.id;
+    const userId = currentUser?.userId;
 
     if (!userId) {
       ElMessage.error('User is not logged in!');
@@ -156,14 +155,6 @@ created() {
     } else {
       ElMessage.error('Failed to loan book.');
     }
-  } catch (error) {
-    console.error('Loan error:', error);
-    if (error.response?.status === 400) {
-      ElMessage.warning(error.response.data.message || 'Loan rejected.');
-    } else {
-      ElMessage.error('An error occurred while processing loan.');
-    }
-  }
 };
 
 const addToWishlist = async () => {
