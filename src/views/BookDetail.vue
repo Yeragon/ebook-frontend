@@ -137,28 +137,83 @@ created() {
     };
 
     const loanBook = async () => {
-      try {
-        await request.post('/loan/borrow', {
-          ebookId: bookId,
-          accountId: userId
-        });
-        ElMessage.success('Successfully loaned this book!');
-      } catch (error) {
-        ElMessage.error('Loan failed.');
-      }
+  try {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = currentUser?.id;
+
+    if (!userId) {
+      ElMessage.error('User is not logged in!');
+      return;
+    }
+
+    const { data: existingLoans } = await request.get(`/loans?account_id=${userId}&ebook_id=${bookId}&status=active`);
+    if (existingLoans.length > 0) {
+      ElMessage.warning('You have already borrowed this book.');
+      return;
+    }
+
+    const { data: allActiveLoans } = await request.get(`/loans?account_id=${userId}&status=active`);
+    if (allActiveLoans.length >= 10) {
+      ElMessage.warning('Maximum 10 active loans allowed.');
+      return;
+    }
+
+    const now = new Date();
+    const startDate = now.toLocaleDateString('en-GB');
+    const returnDate = new Date(now.setDate(now.getDate() + 30)).toLocaleDateString('en-GB');
+
+    const loanData = {
+      ebook_id: bookId,
+      account_id: userId,
+      start_date: startDate,
+      return_date: returnDate,
+      status: 'active'
     };
 
-    const addToWishlist = async () => {
-      try {
-        await request.post('/wishlist/add', {
-          ebookId: bookId,
-          accountId: userId
-        });
-        ElMessage.success('Added to Wishlist!');
-      } catch (error) {
-        ElMessage.error('Already in Wishlist or failed.');
-      }
+    const res = await request.post('/loans', loanData);
+    if (res.status === 200 || res.status === 201) {
+      ElMessage.success('Book loaned successfully!');
+    } else {
+      ElMessage.error('Loan failed.');
+    }
+  } catch (error) {
+    console.error(error);
+    ElMessage.error('An error occurred while processing loan.');
+  }
+};
+
+const addToWishlist = async () => {
+  try {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = currentUser?.id;
+
+    if (!userId) {
+      ElMessage.warning('Please log in to use wishlist.');
+      return;
+    }
+
+    const { data: existingItems } = await request.get(`/wishlist?account_id=${userId}&ebook_id=${bookId}`);
+    if (existingItems.length > 0) {
+      ElMessage.warning('This book is already in your wishlist.');
+      return;
+    }
+
+    const wishlistItem = {
+      account_id: userId,
+      ebook_id: bookId
     };
+
+    const res = await request.post('/wishlist', wishlistItem);
+    if (res.status === 200 || res.status === 201) {
+      ElMessage.success('Added to wishlist!');
+    } else {
+      ElMessage.error('Failed to add to wishlist.');
+    }
+  } catch (error) {
+    console.error(error);
+    ElMessage.error('An error occurred while adding to wishlist.');
+  }
+};
 
     const submitComment = async () => {
       if (!newComment.value.trim()) {
