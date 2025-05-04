@@ -226,7 +226,7 @@ export default {
         this.searchResults = response;
 
         // 跳转到搜索结果页面，并将搜索的关键词传递过去
-        this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
+        this.$router.push(`/booklist/${this.searchQuery.trim()}`);
       } catch (error) {
         ElMessage.error('Search failed, please try again.');
       }
