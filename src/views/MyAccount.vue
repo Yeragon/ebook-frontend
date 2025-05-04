@@ -110,7 +110,9 @@
 
 <script>
 import { h } from 'vue';
-import { Money } from '@element-plus/icons-vue'
+import { Money } from '@element-plus/icons-vue';
+import request from '@/utils/request';
+
 
 export default {
   name: 'MyAccount',
@@ -174,46 +176,31 @@ export default {
     toggleFavorite(book) {
       book.favorite = !book.favorite;
     },
-    loanBook(book) {
+    
+    async loanBook(book) {
+  try {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = currentUser?.id;
 
-      // 先获取当前借阅书籍列表
-  let allOnLoan = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
+    if (!userId) {
+      this.$message.error('User is not logged in!');
+      return;
+    }
 
-// 检查是否已借满 10 本
-if (allOnLoan.length >= 10) {
-  this.$message.error('You cannot loan more than 10 books at a time.');
-  return; // 阻止继续执行借书流程
-}
+    const data = await request.post('/loan/borrow', {
+      userId,
+      ebookId: book.id
+    });
 
-       // 获取当前日期
-  const currentDate = new Date();
+    this.$message.success(`You loaned "${book.title}" successfully!`);
+    this.loadOnLoan(); // 刷新借阅列表
+    this.loadDueSoon(); // 刷新即将到期列表
+  } catch (error) {
+    console.error('Loan error:', error);
+    // 错误提示已由 request.js 自动处理，无需重复
+  }
+},
 
-// 设置借书的到期日期为当前日期加 30 天
-const expirationDate = new Date(currentDate);
-expirationDate.setDate(currentDate.getDate() + 30);
-
-// 将日期格式化为 dd/mm/yyyy
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-// 设置开始和结束日期（格式为 dd/mm/yyyy）
-book.rentalStartDate = formatDate(currentDate);
-book.expirationDate = formatDate(expirationDate);
-
-// 保存到本地存储（更新 onLoanBooks 列表）
-allOnLoan.push(book);
-localStorage.setItem('onLoanBooks', JSON.stringify(allOnLoan));
-
-// 更新 DUE Soon 列表
-this.loadDueSoon();
-      
-this.$message.success(`You loaned "${book.title}" successfully!`);
-      // 这里可以加实际借书逻辑
-    },
     loadWishlist() {
       const data = localStorage.getItem('wishlistBooks');
       this.wishlist = data ? JSON.parse(data) : [];

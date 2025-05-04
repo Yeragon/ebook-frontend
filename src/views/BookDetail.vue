@@ -137,48 +137,83 @@ created() {
     };
 
     const loanBook = async () => {
-      try {
-        await request.post('/loan/borrow', {
-          ebookId: bookId,
-          accountId: userId
-        });
-        ElMessage.success('Successfully loaned this book!');
-      } catch (error) {
-        ElMessage.error('Loan failed.');
-      }
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = currentUser?.userId;
+
+    if (!userId) {
+      ElMessage.error('User is not logged in!');
+      return;
+    }
+
+    const res = await request.post('/loan/borrow', {
+      userId,
+      ebookId: bookId
+    });
+
+    if (res.data.code === 200) {
+      ElMessage.success(res.data.message || 'Success!');
+    } else {
+      ElMessage.warning(res.data.message || 'Failed to loan book.');
+
+    }
+};
+
+const addToWishlist = async () => {
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = currentUser?.userId;
+
+    if (!userId) {
+      ElMessage.warning('Please log in to use wishlist.');
+      return;
+    }
+
+    const wishlistItem = {
+      userId,
+      ebookId: bookId
     };
 
-    const addToWishlist = async () => {
-      try {
-        await request.post('/wishlist/add', {
-          ebookId: bookId,
-          accountId: userId
-        });
-        ElMessage.success('Added to Wishlist!');
-      } catch (error) {
-        ElMessage.error('Already in Wishlist or failed.');
-      }
-    };
+    const res = await request.post('/wishlist/add', wishlistItem);
+    if (res.data.code === 200) {
+  ElMessage.success(res.data.message || 'Success!');
+} else {
+  ElMessage.warning(res.data.message || 'Something went wrong');
+}
 
-    const submitComment = async () => {
-      if (!newComment.value.trim()) {
-        ElMessage.warning('Please enter a comment.');
-        return;
-      }
-      try {
-        await request.post('/review/add', {
-          ebookId: bookId,
-          rating: 5,
-          comment: newComment.value
-        });
-        ElMessage.success('Comment added!');
-        commentDialogVisible.value = false;
-        newComment.value = '';
-        fetchComments();
-      } catch (error) {
-        ElMessage.error('Failed to submit comment.');
-      }
-    };
+};
+
+
+const submitComment = async () => {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const userId = currentUser?.userId;
+
+  if (!userId) {
+    ElMessage.warning('Please log in before commenting.');
+    return;
+  }
+
+  if (!newComment.value.trim()) {
+    ElMessage.warning('Please enter a comment.');
+    return;
+  }
+
+  try {
+    await request.post('/review/add', {
+      userId,                // ✅ 添加 userId
+      ebookId: bookId,
+      rating: 5,
+      content: newComment.value   // ✅ 修正字段名为 content，确保和后端对应
+    });
+
+    ElMessage.success('Comment added!');
+    commentDialogVisible.value = false;
+    newComment.value = '';
+    fetchComments();
+  } catch (error) {
+    ElMessage.error('Failed to submit comment.');
+  }
+};
+
 
     onMounted(() => {
       fetchBookDetail();
