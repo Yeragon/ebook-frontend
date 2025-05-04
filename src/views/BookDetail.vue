@@ -171,7 +171,7 @@ created() {
     };
 
     const res = await request.post('/loans', loanData);
-    if (res.status === 200 || res.status === 201) {
+    if (res.status === 200 ) {
       ElMessage.success('Book loaned successfully!');
     } else {
       ElMessage.error('Loan failed.');
