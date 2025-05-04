@@ -16,6 +16,10 @@
           <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm your password"></el-input>
         </el-form-item>
 
+        <div class="form-links">
+          <el-link type="primary" @click="$router.push('/login')">Back to Login</el-link>
+        </div>
+
         <el-form-item>
           <el-button type="primary" class="register-button" @click="submitRegister">Register</el-button>
         </el-form-item>
@@ -115,7 +119,10 @@ export default {
 .input-item {
   text-align: left;
 }
-
+.form-links {
+  margin: 20px 0;
+  text-align: center;
+}
 .register-button {
   width: 100%;
   background-color: #4d8dff;

@@ -8,9 +8,9 @@
           <el-input v-model="form.email" placeholder="Enter your registered email"></el-input>
         </el-form-item>
 
-        <el-form-item label="Current Password" prop="oldPassword" class="input-item">
+        <!-- <el-form-item label="Current Password" prop="oldPassword" class="input-item">
   <el-input v-model="form.oldPassword" type="password" placeholder="Enter current password"></el-input>
-</el-form-item>
+</el-form-item> -->
 
 <el-form-item label="New Password" prop="newPassword" class="input-item">
   <el-input v-model="form.newPassword" type="password" placeholder="Enter new password"></el-input>
@@ -54,10 +54,10 @@ rules: {
     { required: true, message: 'Please input your registered email', trigger: 'blur' },
     { type: 'email', message: 'Please input a valid email', trigger: ['blur', 'change'] }
   ],
-  oldPassword: [
-    { required: true, message: 'Please input your current password', trigger: 'blur' },
-    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
-  ],
+  // oldPassword: [
+  //   { required: true, message: 'Please input your current password', trigger: 'blur' },
+  //   { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
+  // ],
   newPassword: [
     { required: true, message: 'Please input your new password', trigger: 'blur' },
     { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
@@ -91,7 +91,7 @@ rules: {
       try {
         await request.post('/changepassword', {
           email: this.form.email,
-          oldPassword: this.form.oldPassword,
+          // oldPassword: this.form.oldPassword,
           newPassword: this.form.newPassword
         });
         this.$message.success('Password changed successfully. Please login again.');
