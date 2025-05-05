@@ -71,6 +71,7 @@
                 <el-button
                   type="warning"
                   size="small"
+                  :disabled="scope.row.status !== 'active'"
                   @click="returnBook(scope.row)"
                 >Return</el-button>
               </template>
@@ -228,10 +229,32 @@ export default {
       this.dueSoonList = res;
 
     },
-    loanBook(book) {
-      this.$message.success(`You loaned "${book.title}" successfully!`);
-    },
 
+    async loanBook(book) {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const userId = currentUser?.userId;
+
+  if (!userId) {
+    this.$message.error('User is not logged in!');
+    return;
+  }
+
+  try {
+    const res = await request.post('/loan/borrow', {
+      userId,
+      ebookId: book.id  // 使用从wishlist获取的书籍id
+    });
+
+    if (res.data.code === 200) {
+      this.$message.success(res.data.message || 'Book loaned successfully!');
+    } else {
+      this.$message.warning(res.data.message || 'Failed to loan book.');
+    }
+  } catch (error) {
+    console.error('Error in loaning book:', error);
+    this.$message.error('An error occurred while trying to loan the book.');
+  }
+},
     toggleFavorite(book) {
       console.log('Clicked book:', book);
       this.selectedBook = book;
