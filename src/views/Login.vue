@@ -9,7 +9,7 @@
         </el-form-item>
 
         <el-form-item label="Password" prop="password" class="input-item">
-          <el-input v-model="form.password" type="password" placeholder="Enter your password"></el-input>
+          <el-input v-model="form.password" type="password" placeholder="Enter your password" show-password></el-input>
         </el-form-item>
 
         <div class="form-links">

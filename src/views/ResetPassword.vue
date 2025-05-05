@@ -13,11 +13,11 @@
 </el-form-item> -->
 
 <el-form-item label="New Password" prop="newPassword" class="input-item">
-  <el-input v-model="form.newPassword" type="password" placeholder="Enter new password"></el-input>
+  <el-input v-model="form.newPassword" type="password" placeholder="Enter new password" show-password></el-input>
 </el-form-item>
 
 <el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
-  <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm new password"></el-input>
+  <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm new password" show-password></el-input>
 </el-form-item>
 
 
