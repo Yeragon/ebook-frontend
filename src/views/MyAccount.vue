@@ -94,7 +94,7 @@
     <el-table-column label="Comment" align="center">
       <template #default="scope">
         <el-button
-          icon="el-icon-chat-line-round"
+          :icon="chatIcon"
           circle
           size="small"
           @click="commentBook(scope.row)"
@@ -112,7 +112,7 @@
 import { h } from 'vue';
 import { Money } from '@element-plus/icons-vue';
 import request from '@/utils/request';
-
+import { ChatLineRound } from '@element-plus/icons-vue';
 
 export default {
   name: 'MyAccount',
@@ -138,6 +138,7 @@ export default {
       onLoanList: [],
       dueSoonList: [],
       moneyIcon: h(Money),
+      chatIcon: h(ChatLineRound),
     };
   },
   created() {
@@ -214,9 +215,15 @@ export default {
     const data = localStorage.getItem('onLoanBooks');
     this.onLoanList = data ? JSON.parse(data) : [];
     },
+    
     commentBook(book) {
     this.$message.success(`You clicked comment on "${book.title}"!`);
-    },
+    this.$router.push({
+        name: 'BookDetail',
+        params: { id: book.id },
+        query: { showComment: 'true' }
+    });
+},
 
     loadDueSoon() {
   const allBooks = JSON.parse(localStorage.getItem('onLoanBooks')) || [];
