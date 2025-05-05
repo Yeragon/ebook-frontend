@@ -97,6 +97,19 @@
           </el-table>
         </el-tab-pane>
       </el-tabs>
+      <!-- 🔽 弹窗放这里，tabs 外部 -->
+<el-dialog
+  title="Remove from Wishlist"
+  :visible.sync="confirmDialogVisible"
+  width="30%"
+  center
+>
+  <span>Are you sure you want to remove "{{ selectedBook?.title }}" from your wishlist?</span>
+  <template #footer>
+    <el-button @click="cancelUnfavorite">Cancel</el-button>
+    <el-button type="primary" @click="confirmUnfavorite">Confirm</el-button>
+  </template>
+</el-dialog>
     </div>
   </div>
 </template>
@@ -131,7 +144,9 @@ export default {
       onLoanList: [],
       dueSoonList: [],
       moneyIcon: h(Money),
-      chatIcon: h(ChatLineRound)
+      chatIcon: h(ChatLineRound),
+      confirmDialogVisible: false,
+      selectedBook: null,
     };
   },
   created() {
@@ -198,9 +213,42 @@ export default {
     loanBook(book) {
       this.$message.success(`You loaned "${book.title}" successfully!`);
     },
+
     toggleFavorite(book) {
-      book.favorite = !book.favorite;
+      this.selectedBook = book;
+      this.confirmDialogVisible = true;
     },
+
+    async confirmUnfavorite() {
+  if (!this.selectedBook) return;
+
+  try {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || !user.userId) return;
+
+    // 向后端发送取消收藏请求
+    await request.post(`/wishlist/unfavorite`, {
+      userId: user.userId,
+      bookId: this.selectedBook.id
+    });
+
+    this.$message.success(`"${this.selectedBook.title}" has been removed from your wishlist.`);
+
+      // 重新拉取 wishlist
+      await this.loadWishlistFromServer(user.userId);
+     } catch (error) {
+        this.$message.error('Failed to remove from wishlist.');
+     } finally {
+        this.confirmDialogVisible = false;
+        this.selectedBook = null;
+     }
+    },
+
+    cancelUnfavorite() {
+      this.confirmDialogVisible = false;
+      this.selectedBook = null;
+    },
+
     commentBook(book) {
       this.$router.push({ name: 'BookDetail', params: { id: book.id }, query: { showComment: 'true' } });
     },
