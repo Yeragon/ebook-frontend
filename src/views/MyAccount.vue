@@ -49,9 +49,8 @@
             </el-table-column>
             <el-table-column label="Favorite" align="center">
               <template #default="scope">
-                <el-button
-                  :style="{ color: scope.row.favorite ? 'red' : '#ccc' }"
-                  icon="el-icon-heart"
+                <el-button                  
+                  :icon="heartIcon" 
                   circle
                   @click="toggleFavorite(scope.row)"
                 />
@@ -135,6 +134,7 @@
 import { h } from 'vue';
 import { Money } from '@element-plus/icons-vue';
 import { ChatLineRound } from '@element-plus/icons-vue';
+import { Heart } from '@element-plus/icons-vue';
 import request from '@/utils/request';
 
 export default {
@@ -162,6 +162,7 @@ export default {
       dueSoonList: [],
       moneyIcon: h(Money),
       chatIcon: h(ChatLineRound),
+      heartIcon: h(Heart),
       confirmDialogVisible: false,
       selectedBook: null,
       confirmReturnDialogVisible: false,
