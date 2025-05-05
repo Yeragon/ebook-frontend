@@ -97,7 +97,7 @@
           </el-table>
         </el-tab-pane>
       </el-tabs>
-      <!-- 🔽 弹窗放这里，tabs 外部 -->
+      <!-- 取消收藏 弹窗放这里，tabs 外部 -->
       <el-dialog
   title="Remove from Wishlist"
   :model-value="confirmDialogVisible"
@@ -111,6 +111,21 @@
     <el-button type="primary" @click="confirmUnfavorite">Confirm</el-button>
   </template>
 </el-dialog>
+<!-- 还书 弹窗放这里，tabs 外部 -->
+<el-dialog
+  title="Return Book"
+  :model-value="confirmReturnDialogVisible"
+  @update:modelValue="confirmReturnDialogVisible = $event"
+  width="30%"
+  center
+>
+  <span>Are you sure you want to return "{{ selectedReturnBook?.title }}"?</span>
+  <template #footer>
+    <el-button @click="cancelReturn">Cancel</el-button>
+    <el-button type="primary" @click="confirmReturn">Confirm</el-button>
+  </template>
+</el-dialog>
+
     </div>
   </div>
 </template>
@@ -148,6 +163,8 @@ export default {
       chatIcon: h(ChatLineRound),
       confirmDialogVisible: false,
       selectedBook: null,
+      confirmReturnDialogVisible: false,
+      selectedReturnBook: null,
     };
   },
   created() {
@@ -256,8 +273,39 @@ export default {
       this.$router.push({ name: 'BookDetail', params: { id: book.id }, query: { showComment: 'true' } });
     },
     returnBook(book) {
-      this.$message.success(`You have returned "${book.title}" successfully!`);
-    }
+      this.selectedReturnBook = book;
+      this.confirmReturnDialogVisible = true;
+    },
+
+    cancelReturn() {
+  this.confirmReturnDialogVisible = false;
+  this.selectedReturnBook = null;
+},
+
+async confirmReturn() {
+  if (!this.selectedReturnBook) return;
+
+  try {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || !user.userId) return;
+
+    await request.post('/loan/return', {
+      userId: user.userId,
+      bookId: this.selectedReturnBook.id
+    });
+
+    this.$message.success(`"${this.selectedReturnBook.title}" has been returned successfully.`);
+
+    await this.loadDueSoon(user.userId);
+    await this.loadOnLoan(); // 可选，如果你希望同时刷新 On Loan 列表
+
+  } catch (error) {
+    this.$message.error('Failed to return the book.');
+  } finally {
+    this.confirmReturnDialogVisible = false;
+    this.selectedReturnBook = null;
+  }
+}
   }
 };
 </script>
