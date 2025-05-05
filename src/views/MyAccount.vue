@@ -291,7 +291,7 @@ async confirmReturn() {
 
     await request.post('/loan/return', {
       userId: user.userId,
-      bookId: this.selectedReturnBook.id
+      ebookId: this.selectedReturnBook.ebookId
     });
 
     this.$message.success(`"${this.selectedReturnBook.title}" has been returned successfully.`);
