@@ -98,13 +98,14 @@
         </el-tab-pane>
       </el-tabs>
       <!-- 🔽 弹窗放这里，tabs 外部 -->
-<el-dialog
+      <el-dialog
   title="Remove from Wishlist"
-  :visible.sync="confirmDialogVisible"
+  :model-value="confirmDialogVisible"
+  @update:modelValue="confirmDialogVisible = $event"
   width="30%"
   center
 >
-  <span>Are you sure you want to remove "{{ selectedBook?.title }}" from your wishlist?</span>
+<span>Are you sure you want to remove "{{ selectedBook?.title }}" from your wishlist?</span>
   <template #footer>
     <el-button @click="cancelUnfavorite">Cancel</el-button>
     <el-button type="primary" @click="confirmUnfavorite">Confirm</el-button>
@@ -215,8 +216,10 @@ export default {
     },
 
     toggleFavorite(book) {
+      console.log('Clicked book:', book);
       this.selectedBook = book;
       this.confirmDialogVisible = true;
+      console.log('Dialog should be visible:', this.confirmDialogVisible);
     },
 
     async confirmUnfavorite() {
@@ -302,5 +305,8 @@ export default {
   display: flex;
   justify-content: center;
   gap: 20px;
+}
+::v-deep(.el-overlay) {
+  z-index: 3000 !important;
 }
 </style>
