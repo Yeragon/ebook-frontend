@@ -7,7 +7,7 @@
       </el-form-item>
 
       <el-form-item label="Full Name" prop="name">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.fullName"></el-input>
       </el-form-item>
 
       <el-form-item label="Phone Number" prop="phoneNumber">
@@ -40,13 +40,14 @@ export default {
     return {
       saving: false,
       form: {
+        id:'',
         email: '',
-        name: '',
+        fullName: '',
         phoneNumber: '',
         dateOfBirth: ''
       },
       rules: {
-        name: [{ required: true, message: 'Full name is required', trigger: 'blur' }],
+        fullName: [{ required: true, message: 'Full name is required', trigger: 'blur' }],
         phoneNumber: [{ required: true, message: 'Phone number is required', trigger: 'blur' }],
         dateOfBirth: [{ required: true, message: 'Date of birth is required', trigger: 'change' }]
       }
@@ -56,8 +57,9 @@ export default {
     const userData = localStorage.getItem('currentUser');
     if (userData) {
       const user = JSON.parse(userData);
+      this.form.id = user.userId;
       this.form.email = user.email;
-      this.form.name = user.name || '';
+      this.form.fullName = user.fullName || '';
       this.form.phoneNumber = user.phoneNumber || '';
       this.form.dateOfBirth = user.dateOfBirth || '';
     }
@@ -69,15 +71,15 @@ export default {
           try {
             this.saving = true;
             // 提交到后端接口（假设是 /api/account/update）
-            await request.post('/api/account/update', {
+            await request.post('/account/update', {
+              id: this.form.id,
               email: this.form.email,
-              name: this.form.name,
-              phoneNumber: this.form.phoneNumber,
+              fullName: this.form.fullName,              phoneNumber: this.form.phoneNumber,
               dateOfBirth: this.form.dateOfBirth
             });
             // 更新本地localStorage
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            currentUser.name = this.form.name;
+            currentUser.fullName = this.form.fullName;
             currentUser.phoneNumber = this.form.phoneNumber;
             currentUser.dateOfBirth = this.form.dateOfBirth;
             localStorage.setItem('currentUser', JSON.stringify(currentUser));

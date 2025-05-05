@@ -97,6 +97,35 @@
           </el-table>
         </el-tab-pane>
       </el-tabs>
+      <!-- 取消收藏 弹窗放这里，tabs 外部 -->
+      <el-dialog
+  title="Remove from Wishlist"
+  :model-value="confirmDialogVisible"
+  @update:modelValue="confirmDialogVisible = $event"
+  width="30%"
+  center
+>
+<span>Are you sure you want to remove "{{ selectedBook?.title }}" from your wishlist?</span>
+  <template #footer>
+    <el-button @click="cancelUnfavorite">Cancel</el-button>
+    <el-button type="primary" @click="confirmUnfavorite">Confirm</el-button>
+  </template>
+</el-dialog>
+<!-- 还书 弹窗放这里，tabs 外部 -->
+<el-dialog
+  title="Return Book"
+  :model-value="confirmReturnDialogVisible"
+  @update:modelValue="confirmReturnDialogVisible = $event"
+  width="30%"
+  center
+>
+  <span>Are you sure you want to return "{{ selectedReturnBook?.title }}"?</span>
+  <template #footer>
+    <el-button @click="cancelReturn">Cancel</el-button>
+    <el-button type="primary" @click="confirmReturn">Confirm</el-button>
+  </template>
+</el-dialog>
+
     </div>
   </div>
 </template>
@@ -131,7 +160,11 @@ export default {
       onLoanList: [],
       dueSoonList: [],
       moneyIcon: h(Money),
-      chatIcon: h(ChatLineRound)
+      chatIcon: h(ChatLineRound),
+      confirmDialogVisible: false,
+      selectedBook: null,
+      confirmReturnDialogVisible: false,
+      selectedReturnBook: null,
     };
   },
   created() {
@@ -198,15 +231,81 @@ export default {
     loanBook(book) {
       this.$message.success(`You loaned "${book.title}" successfully!`);
     },
+
     toggleFavorite(book) {
-      book.favorite = !book.favorite;
+      console.log('Clicked book:', book);
+      this.selectedBook = book;
+      this.confirmDialogVisible = true;
+      console.log('Dialog should be visible:', this.confirmDialogVisible);
     },
+
+    async confirmUnfavorite() {
+  if (!this.selectedBook) return;
+
+  try {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || !user.userId) return;
+
+    // 向后端发送取消收藏请求
+    await request.post(`/wishlist/unfavorite`, {
+      userId: user.userId,
+      bookId: this.selectedBook.id
+    });
+
+    this.$message.success(`"${this.selectedBook.title}" has been removed from your wishlist.`);
+
+      // 重新拉取 wishlist
+      await this.loadWishlistFromServer(user.userId);
+     } catch (error) {
+        this.$message.error('Failed to remove from wishlist.');
+     } finally {
+        this.confirmDialogVisible = false;
+        this.selectedBook = null;
+     }
+    },
+
+    cancelUnfavorite() {
+      this.confirmDialogVisible = false;
+      this.selectedBook = null;
+    },
+
     commentBook(book) {
       this.$router.push({ name: 'BookDetail', params: { id: book.id }, query: { showComment: 'true' } });
     },
     returnBook(book) {
-      this.$message.success(`You have returned "${book.title}" successfully!`);
-    }
+      this.selectedReturnBook = book;
+      this.confirmReturnDialogVisible = true;
+    },
+
+    cancelReturn() {
+  this.confirmReturnDialogVisible = false;
+  this.selectedReturnBook = null;
+},
+
+async confirmReturn() {
+  if (!this.selectedReturnBook) return;
+
+  try {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || !user.userId) return;
+
+    await request.post('/loan/return', {
+      userId: user.userId,
+      ebookId: this.selectedReturnBook.ebookId
+    });
+
+    this.$message.success(`"${this.selectedReturnBook.title}" has been returned successfully.`);
+
+    await this.loadDueSoon(user.userId);
+    await this.loadOnLoan(); // 可选，如果你希望同时刷新 On Loan 列表
+
+  } catch (error) {
+    this.$message.error('Failed to return the book.');
+  } finally {
+    this.confirmReturnDialogVisible = false;
+    this.selectedReturnBook = null;
+  }
+}
   }
 };
 </script>
@@ -254,5 +353,8 @@ export default {
   display: flex;
   justify-content: center;
   gap: 20px;
+}
+::v-deep(.el-overlay) {
+  z-index: 3000 !important;
 }
 </style>
