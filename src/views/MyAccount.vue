@@ -231,28 +231,39 @@ export default {
     },
 
     async loanBook(book) {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  const userId = currentUser?.userId;
+     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const userId = currentUser?.userId;
 
   if (!userId) {
     this.$message.error('User is not logged in!');
     return;
   }
 
-  try {
-    const res = await request.post('/loan/borrow', {
+
+    if (!userId) {
+    this.$message.error('User is not logged in!');
+    return;
+     }
+
+     try {
+    // 因为 request.js 拦截器已经处理了 code !== 200 和错误弹窗
+    await request.post('/loan/borrow', {
       userId,
-      ebookId: book.id  // 使用从wishlist获取的书籍id
+      ebookId: book.ebookId
     });
 
-    if (res.data.code === 200) {
-      this.$message.success(res.data.message || 'Book loaned successfully!');
-    } else {
-      this.$message.warning(res.data.message || 'Failed to loan book.');
-    }
+    this.$message.success('Book loaned successfully!');
+
+    // 更新该书状态
+    const target = this.wishlist.find(item => item.ebookId === book.ebookId);
+    if (target) target.available = false;
+
+    // 可选：刷新 onLoan & dueSoon 列表
+    await this.loadOnLoan();
+    await this.loadDueSoon(userId);
   } catch (error) {
-    console.error('Error in loaning book:', error);
-    this.$message.error('An error occurred while trying to loan the book.');
+    // 不用重复弹窗，request.js 已处理错误提示
+    console.warn('Loan book failed:', error);
   }
 },
     toggleFavorite(book) {
