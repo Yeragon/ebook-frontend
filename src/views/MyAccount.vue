@@ -64,8 +64,16 @@
           <el-table :data="dueSoonList" border>
             <el-table-column prop="title" label="Book" align="center" />
             <el-table-column prop="author" label="Author" align="center" />
-            <el-table-column prop="rentalStartDate" label="Rental Start Date" align="center" />
-            <el-table-column prop="expirationDate" label="Expiration Date" align="center" />
+            <el-table-column label="Rental Start Date" align="center">
+           <template #default="scope">
+             {{ formatDate(scope.row.rentalStartDate) }}
+             </template>
+              </el-table-column>
+              <el-table-column label="Expiration Date" align="center">
+              <template #default="scope">
+              {{ formatDate(scope.row.expirationDate) }}
+             </template>
+              </el-table-column>
             <el-table-column label="Return" align="center">
               <template #default="scope">
                 <el-button
@@ -83,9 +91,15 @@
           <el-table :data="onLoanList" border>
             <el-table-column prop="title" label="Book" align="center" />
             <el-table-column prop="author" label="Author" align="center" />
-            <el-table-column prop="rentalStartDate" label="Rental Start Date" align="center" />
-            <el-table-column prop="expirationDate" label="Expiration Date" align="center" />
-            <el-table-column label="Comment" align="center">
+            <el-table-column label="Rental Start Date" align="center">
+  <template #default="scope">
+    {{ formatDate(scope.row.rentalStartDate) }}
+  </template>
+</el-table-column>            <el-table-column label="Expiration Date" align="center">
+  <template #default="scope">
+    {{ formatDate(scope.row.expirationDate) }}
+  </template>
+</el-table-column>            <el-table-column label="Comment" align="center">
               <template #default="scope">
                 <el-button
                   :icon="chatIcon"
@@ -136,6 +150,8 @@ import { h } from 'vue';
 import { Money } from '@element-plus/icons-vue';
 import { ChatLineRound } from '@element-plus/icons-vue';
 import request from '@/utils/request';
+import dayjs from 'dayjs';
+
 
 export default {
   name: 'MyAccount',
@@ -184,6 +200,10 @@ export default {
     }
   },
   methods: {
+
+    formatDate(dateStr) {
+    return dayjs(dateStr).format('DD MMM YYYY');
+  },
     goHome() {
       this.$router.push('/dashboard');
     },
