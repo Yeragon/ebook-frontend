@@ -281,9 +281,11 @@ export default {
     if (!user || !user.userId) return;
 
     // 向后端发送取消收藏请求
-    await request.post(`/wishlist/unfavorite`, {
-      userId: user.userId,
-      bookId: this.selectedBook.id
+    await request.delete(`/wishlist/remove`, {
+      params: {
+    userId: user.userId,
+    ebookId: this.selectedBook.ebookId
+  }
     });
 
     this.$message.success(`"${this.selectedBook.title}" has been removed from your wishlist.`);
