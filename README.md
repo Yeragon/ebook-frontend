@@ -1,44 +1,82 @@
-# 📚 Ebooks Frontend - API and Pages Mapping
+# 📚 Ebooks Frontend - Startup Guide + API Page Mapping
 
 **Project Authors:** Xiaoyao Yu, Yuandong Li  
-**Email:** c4020626@newcastle.ac.uk
+**Email:** c4020626@newcastle.ac.uk, c4045321@newcastle.ac.uk
 
 ---
 
 ## 📦 Project Structure Overview
 
----
-
-## 🚀 Global Axios Request Handler
-
-| File                   | Purpose                                                                                             |
-| :--------------------- | :-------------------------------------------------------------------------------------------------- |
-| `src/utils/request.js` | Centralized Axios wrapper. Adds Authorization token automatically and handles session expiry (401). |
+This project is the frontend of the eBook loaning system, built using Vue 3 + Element Plus + Vite, communicating with a Spring Boot backend via RESTful APIs.
 
 ---
 
-## 📡 API - Page Mapping
+## ⚙️ Startup Configuration Guide
 
-| API Endpoint                         | Functionality                                 | Page (Vue File)                                                |
-| :----------------------------------- | :-------------------------------------------- | :------------------------------------------------------------- |
-| `/api/auth/login`                    | User login                                    | `src/views/Login.vue`                                          |
-| `/api/auth/register`                 | User registration                             | `src/views/Register.vue`                                       |
-| `/api/auth/resetpassword`            | Reset password                                | `src/views/ResetPassword.vue`                                  |
-| `/api/books`                         | Fetch all books (for homepage recommendation) | `src/views/Home.vue`, `src/views/HomeLogged.vue`               |
-| `/api/books/category/{categoryName}` | Fetch books by category                       | `src/views/Category.vue`                                       |
-| `/api/ebook/{id}`                    | Fetch details of a single ebook               | `src/views/BookDetail.vue`, `src/views/BookDetailUnlogged.vue` |
-| `/api/loan/borrow`                   | Borrow a book                                 | `src/views/BookDetail.vue`                                     |
-| `/api/wishlist/add`                  | Add a book to the wishlist                    | `src/views/BookDetail.vue`                                     |
-| `/api/wishlist/list`                 | Fetch wishlist items                          | `src/views/Wishlist.vue`                                       |
-| `/api/loans/duesoon`                 | Fetch books that are due soon                 | `src/views/HomeLogged.vue`, `src/views/DueSoon.vue`            |
-| `/api/loans/onloan`                  | Fetch books currently on loan                 | `src/views/OnLoan.vue`                                         |
-| `/api/review/list?ebookId={id}`      | List reviews for a specific ebook             | `src/views/BookDetail.vue`                                     |
-| `/api/review/add`                    | Submit a new review for an ebook              | `src/views/BookDetail.vue`                                     |
-| `/api/account/update`                | Update user profile information               | `src/views/EditPage.vue`                                       |
+### ✅ Prerequisites
+
+- Node.js: Recommended v16.x or v18.x
+- Package Manager: npm or yarn
+- IDE: VS Code with Vue extensions
+
+### 📦 Install Dependencies
+
+```bash
+git clone https://github.com/Yeragon/ebook-frontend.git
+cd ebook-frontend
+npm install
+```
+
+### 🚀 Run Development Server
+
+```bash
+npm run dev
+```
+
+Visit at: `http://localhost:5173`
+
+### 🌍 Environment Configuration
+
+Ensure `.env.development` exists in the root directory:
+
+```env
+VITE_BASE_API=http://localhost:8080/api
+```
+
+Vite will proxy all `/api` requests to the backend server.
 
 ---
 
-## 🗺 Page Routing and Navigation
+## 🔗 Global Axios Request Handling
+
+| File                   | Description                                                                                 |
+| :--------------------- | :------------------------------------------------------------------------------------------ |
+| `src/utils/request.js` | Axios wrapper, automatically adds Authorization token and handles session expiration (401). |
+
+---
+
+## 📡 API to Page Mapping
+
+| API Endpoint                         | Functionality                             | Page (Vue File)                                                |
+| :----------------------------------- | :---------------------------------------- | :------------------------------------------------------------- |
+| `/api/auth/login`                    | User login                                | `src/views/Login.vue`                                          |
+| `/api/auth/register`                 | User registration                         | `src/views/Register.vue`                                       |
+| `/api/auth/resetpassword`            | Reset password                            | `src/views/ResetPassword.vue`                                  |
+| `/api/books`                         | Fetch all books (homepage recommendation) | `src/views/Home.vue`, `src/views/HomeLogged.vue`               |
+| `/api/books/category/{categoryName}` | Fetch books by category                   | `src/views/Category.vue`                                       |
+| `/api/ebook/{id}`                    | Fetch book details                        | `src/views/BookDetail.vue`, `src/views/BookDetailUnlogged.vue` |
+| `/api/loan/borrow`                   | Borrow a book                             | `src/views/BookDetail.vue`                                     |
+| `/api/wishlist/add`                  | Add a book to the wishlist                | `src/views/BookDetail.vue`                                     |
+| `/api/wishlist/list`                 | Get wishlist items                        | `src/views/Wishlist.vue`                                       |
+| `/api/loans/duesoon`                 | Fetch books due soon                      | `src/views/HomeLogged.vue`, `src/views/DueSoon.vue`            |
+| `/api/loans/onloan`                  | Fetch currently borrowed books            | `src/views/OnLoan.vue`                                         |
+| `/api/review/list?ebookId={id}`      | List reviews for a specific ebook         | `src/views/BookDetail.vue`                                     |
+| `/api/review/add`                    | Submit a review                           | `src/views/BookDetail.vue`                                     |
+| `/api/account/update`                | Update user profile                       | `src/views/EditPage.vue`                                       |
+
+---
+
+## 🗺 Page Routing Map
 
 | Page                             | URL Path                  | Vue File                 |
 | :------------------------------- | :------------------------ | :----------------------- |
@@ -58,29 +96,9 @@
 
 ---
 
-## 📋 Important Notes
-
-- All frontend API requests are prefixed with `/api` and proxied to `http://localhost:8080` via Vite's proxy setup.
-- Authorization token (`Bearer Token`) is automatically attached to API headers when the user is logged in.
-- Session expiry (HTTP 401) will trigger auto logout and redirection to `/login`.
-
----
-
 ## 📬 Contact
 
 - **Authors:** Xiaoyao Yu, Yuandong Li
 - **Email:** c4020626@newcastle.ac.uk, c4045321@newcastle.ac.uk
 
 ---
-
-# 🎯 Summary
-
-This documentation provides a full mapping between the frontend pages and the backend API endpoints.
-
-It helps backend developers:
-
-- Quickly locate the frontend file related to each API.
-- Understand the data flow and integration points between frontend and backend.
-- Facilitate collaboration between frontend and backend teams.
-
-Thank you for reviewing the project!
