@@ -1,12 +1,13 @@
+<!-- Topup.vue Made by Yuandong Li Start date: 12/04/2025 -->
 <template>
   <div class="topup-page">
-    <!-- 顶部导航 -->
+    <!-- Header -->
     <div class="header">
       <h1 class="logo" @click="$router.push('/dashboard')">Ebooks</h1>
       <el-avatar :src="userAvatar" @click="$router.push('/account')" />
     </div>
 
-    <!-- 充值表单 -->
+    <!-- Top-up form card -->
     <el-card class="topup-card">
       <h2>Top Up Your Balance</h2>
 
@@ -47,7 +48,7 @@ export default {
         const res = await request.get(`/api/payment/horsepayurl?userId=${userId}&amount=${form.value.amount}`);
         const paymentUrl = res.data.url;
         if (paymentUrl) {
-          window.location.href = paymentUrl; // 跳转到支付页面
+          window.location.href = paymentUrl; 
         } else {
           ElMessage.error('Failed to get payment URL.');
         }

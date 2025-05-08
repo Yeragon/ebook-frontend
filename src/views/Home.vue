@@ -1,16 +1,18 @@
-<!-- src/views/Home.vue -->
+<!-- src/views/Home.vue Made by Xiaoyao Yu and Yuandong Li Start date:12/04/2025-->
 <template>
   <div class="home-page">
     <!-- Header -->
     <header class="header">
       <h1 class="logo">Ebooks</h1>
+
+      <!-- Login button and user icon for unlogged users -->
       <div class="header-actions">
         <el-button class="login-button" @click="$router.push('/login')">Login</el-button>
         <el-avatar icon="el-icon-user" />
       </div>
     </header>
 
-    <!-- Search -->
+    <!-- Search bar -->
     <div class="search-container">
     <el-input
         v-model="searchQuery"
@@ -19,13 +21,14 @@
         class="search-input"
         @keyup.enter="searchBooks"
       >
+      <!-- Search button inside input append slot -->
         <template #append>
           <el-button @click="searchBooks" style="font-size: 12px;">Enter</el-button>
         </template>
       </el-input>
     </div>
 
-    <!-- Recommended Books -->
+    <!-- Recommended Books section -->
     <section class="section">
       <div class="section-title-with-icon">
       <div class="section-header">
@@ -46,12 +49,13 @@
       </div>
     </section>
 
-    <!-- Category -->
+    <!-- Category section -->
     <section class="section">
       <div class="section-header">
         <h2>Category</h2>
         <el-button type="text" @click="$router.push('/category')">View all →</el-button>
       </div>
+      <!-- Category cards in grid layout -->
       <div class="classification-grid">
         <div v-for="category in classifications" :key="category.name" class="classification-card" @click="goToCategory(category.name)">
           <el-image :src="category.img" fit="cover" class="classification-image">
@@ -78,10 +82,12 @@ export default {
   name: 'Home',
   data() {
     return {
-      Refresh,//绑定图标
+      Refresh,
       Search,
       searchQuery: '',
       recommendedBooks: [],
+
+       // Static category list with book count and cover image
       classifications: [
       {
     name: 'History',
@@ -117,9 +123,11 @@ export default {
     };
   },
   created() {
+    // Load recommended books on page load
     this.refreshBooks();
   },
   methods: {
+    // Fetch random recommended books
     async refreshBooks() {
       try {
         const response = await request.get('/books');
@@ -131,25 +139,25 @@ export default {
         console.error('Failed to fetch books', error);
       }
     },
+    // Navigate to selected category
     goToCategory(categoryName) {
       this.$router.push({ path: `/category/${categoryName}` });
     },
+    // Navigate to selected book detail
     goBookDetail(bookId) {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
       },
     
-
+    // Execute search and redirect to result page
     async searchBooks() {
     if (this.searchQuery.trim()) {
       try {
-        // 发送请求到后端的搜索接口
         const response = await request.get('/search/books', {
           params: { query: this.searchQuery.trim() }
         });
-        // 将搜索结果保存到 searchResults 中
+        // Store results and navigate
         this.searchResults = response;
 
-        // 跳转到搜索结果页面，并将搜索的关键词传递过去
         this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
       } catch (error) {
         ElMessage.error('Search failed, please try again.');

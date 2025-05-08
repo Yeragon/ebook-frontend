@@ -11,12 +11,12 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true, // 启动自动打开浏览器
+    open: true, // Automatically open the browser on server start
     proxy: {
       '/api': {
-        target: 'http://localhost:8080', // ✅ 后端 Spring Boot 地址
+        target: 'http://localhost:8080', //  Backend Spring Boot server address
         changeOrigin: true
-        // ❌ 不要使用 rewrite，否则会去掉 /api 前缀导致 404
+        // ❌ Do not use rewrite, otherwise it will remove the /api prefix and cause 404 errors
       }
     }
   }

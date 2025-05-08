@@ -1,6 +1,8 @@
+<!-- EditPage.vue Made by Xiaoyao Yu and Yuandong Li Start date: 12/04/2025 -->
 <template>
   <div class="edit-page">
     <h2 class="page-title">Edit My Information</h2>
+    <!-- Element Plus Form with validation -->
     <el-form :model="form" :rules="rules" ref="editForm" label-width="120px" class="edit-form">
       <el-form-item label="Email" prop="email">
         <el-input v-model="form.email" disabled></el-input>
@@ -23,8 +25,11 @@
         ></el-date-picker>
       </el-form-item>
 
+      <!-- Action Buttons -->
       <div class="button-group">
+        <!-- Save info -->
         <el-button type="primary" :loading="saving" @click="submitEdit">Save</el-button>
+        <!-- Go back to MyAccount.vue -->
         <el-button @click="goBack">Back</el-button>
       </div>
     </el-form>
@@ -38,7 +43,7 @@ export default {
   name: 'EditPage',
   data() {
     return {
-      saving: false,
+      saving: false, // Loading state for save button
       form: {
         id:'',
         email: '',
@@ -46,6 +51,7 @@ export default {
         phoneNumber: '',
         dateOfBirth: ''
       },
+      // Validation rules for the form
       rules: {
         fullName: [{ required: true, message: 'Full name is required', trigger: 'blur' }],
         phoneNumber: [{ required: true, message: 'Phone number is required', trigger: 'blur' }],
@@ -54,6 +60,7 @@ export default {
     };
   },
   created() {
+    // Load user data from localStorage when component is created
     const userData = localStorage.getItem('currentUser');
     if (userData) {
       const user = JSON.parse(userData);
@@ -65,19 +72,20 @@ export default {
     }
   },
   methods: {
+    // Validate and submit the form
     async submitEdit() {
       this.$refs.editForm.validate(async (valid) => {
         if (valid) {
           try {
             this.saving = true;
-            // 提交到后端接口（假设是 /api/account/update）
+            // Send update request to backend
             await request.post('/account/update', {
               id: this.form.id,
               email: this.form.email,
               fullName: this.form.fullName,              phoneNumber: this.form.phoneNumber,
               dateOfBirth: this.form.dateOfBirth
             });
-            // 更新本地localStorage
+            // Update localStorage with new user info
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             currentUser.fullName = this.form.fullName;
             currentUser.phoneNumber = this.form.phoneNumber;
@@ -94,6 +102,7 @@ export default {
         }
       });
     },
+    // Return to account overview page(MyAccount.vue)
     goBack() {
       this.$router.push('/myaccount');
     }

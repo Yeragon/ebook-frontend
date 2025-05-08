@@ -1,15 +1,16 @@
+//Made by Xiaoyao Yu  date:20/04/2025
 // src/utils/request.js
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 
-// 创建 axios 实例
+// Create a custom Axios instance for HTTP requests
 const service = axios.create({
-  baseURL: '/api',  // 后端接口前缀
+  baseURL: '/api',  // API base URL
   timeout: 5000
 });
 
-// 请求拦截器：添加 token（如果有）
+// In the request interceptor, attach the token to the headers if it exists
 service.interceptors.request.use(
   (config) => {
     let currentUser = null;
@@ -31,18 +32,18 @@ service.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 响应拦截器：统一处理返回格式和错误码
+// In the response interceptor, standardize the handling of response structure and error codes
 service.interceptors.response.use(
   (response) => {
     const res = response.data;
 
-    // 后端返回的是统一格式 { code, message, data }
+    // The backend responses follow a unified structure with fields: code, message, and data
     if (res.code !== 200) {
       ElMessage.error(res.message || 'Request failed');
       return Promise.reject(new Error(res.message || 'Error'));
     }
 
-    // 返回真正的业务数据部分
+    // Return actual data  
     return res.data;
   },
   (error) => {

@@ -1,9 +1,11 @@
+<!-- BookListUnLogged.vue Made by Xiaoyao Yu and Yuandong Li Start date: 21/04/2025 -->
 <template>
     <div class="book-list-page">
-      <!-- Header -->
+      <!-- Header with Logo and Login -->
       <header class="header">
         <h1 class="logo" style="cursor: pointer" @click="goHome">Ebooks</h1>
         <div class="header-actions">
+           <!-- Login Button -->
           <el-button class="login-button" @click="$router.push('/login')">Login</el-button>
           <el-avatar icon="el-icon-user" />
         </div>
@@ -27,12 +29,16 @@
       <!-- Search Results -->
       <section class="section">
         <h2>Search Results for: "{{ keyword }}"</h2>
+
+        <!-- No Result Message -->
         <el-card v-if="filteredBooks.length === 0" class="no-result">
         <div>
           <p>😢 Sorry, no book found with the name "<strong>{{ keyword }}</strong>".</p>
           <p>Please try other key words</p>
         </div>
         </el-card>  
+
+        <!-- Result List -->
         <div class="result-list" v-else>
           <div v-for="book in filteredBooks" :key="book.id" class="result-card" @click="goBookDetail(book.id)">
             <el-image :src="book.coverURL" fit="cover" class="book-image">
@@ -40,6 +46,7 @@
                 <div class="image-slot">Image not found</div>
               </template>
             </el-image>
+            <!-- Book Info -->
             <div class="book-info">
               <p class="book-title">{{ book.title }}</p>
               <p class="book-author">{{ book.author }}</p>
@@ -63,17 +70,19 @@
     name: 'BookListUnlogged',
     data() {
       return {
-        Search,
-        keyword: '',
-        filteredBooks: []
+        Search,// Bind search icon
+        keyword: '',// Search keyword from route
+        filteredBooks: [] // Filtered books from backend
       };
     },
     created() {
+      // Get keyword from route when component is created
      this.keyword = this.$route.params.keyword || '';
      this.fetchBooks();
     },
 
     watch: {
+      // React to changes in route keyword
   '$route.params.keyword': {
     immediate: true,
     handler(newKeyword) {
@@ -83,10 +92,12 @@
   }
 },
     methods: {
+      // Navigate to home
       goHome() {
         this.$router.push('/');
       },
         
+      // Fetch books from API
       async fetchBooks() {
         try {
           const response = await request.get('/search/books', {
@@ -98,6 +109,8 @@
           console.error('Failed to fetch books', error);
         }
       },
+
+      // Handle search action
       searchBooks() {
         if (!this.keyword.trim()) {
         this.$message.warning('Please enter a keyword.');
@@ -106,6 +119,8 @@
         this.$router.push(`/booklistunlogged/${this.keyword.trim()}`);
 
       },
+
+      // Go to book detail page
       goBookDetail(bookId) {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
       }

@@ -1,3 +1,4 @@
+<!-- BookList.vue Made by Xiaoyao Yu and Yuandong Li Start date: 21/04/2025 -->
 <template>
     <div class="book-list-page">
       <!-- Header -->
@@ -11,7 +12,7 @@
         </div>
       </header>
   
-      <!-- Search -->
+      <!-- Search bar -->
       <div class="search-container">
         <el-input
           v-model="keyword"
@@ -26,15 +27,17 @@
         </el-input>
       </div>
   
-      <!-- Search Results -->
+      <!-- Search Results section -->
       <section class="section">
         <h2>Search Results for: "{{ keyword }}"</h2>
+        <!-- No results -->
         <el-card v-if="filteredBooks.length === 0" class="no-result">
         <div>
           <p>😢 Sorry, no book found with the name "<strong>{{ keyword }}</strong>".</p>
           <p>Please try other key words</p>
         </div>
         </el-card>    
+        <!-- Result List -->
         <div class="result-list" v-else>
           <div v-for="book in filteredBooks" :key="book.id" class="result-card" @click="goBookDetail(book.id)">
             <el-image :src="book.coverURL" fit="cover" class="book-image">
@@ -42,6 +45,7 @@
                 <div class="image-slot">Image not found</div>
               </template>
             </el-image>
+            <!-- Book Info -->
             <div class="book-info">
               <p class="book-title">{{ book.title }}</p>
               <p class="book-author">{{ book.author }}</p>
@@ -85,23 +89,27 @@ watch: {
     name: 'BookList',
     data() {
       return {
-        Search,
-        currentUser: {},
-        keyword: '',
-        filteredBooks: []
+        Search,// Bind search icon
+        currentUser: {}, // User object
+        keyword: '',// Search keyword from route
+        filteredBooks: [] // Filtered books from backend
       };
     },
     
     methods: {
+      // Navigate to dashboard
       goHome() {
         this.$router.push('/dashboard');
       },
         
+      // logout
       logout() {
         localStorage.removeItem('currentUser');
         this.$message.success('Logged out successfully!');
         this.$router.push('/');
       },
+
+      // Fetch book list by keyword
       async fetchBooks() {
         try {
           const response = await request.get('/search/books', {
@@ -113,6 +121,8 @@ watch: {
           this.filteredBooks = [];
         }
       },
+
+       // Search button or enter key
       searchBooks() {
       if (!this.keyword.trim()) {
         this.$message.warning('Please enter a keyword.');
@@ -121,6 +131,7 @@ watch: {
        this.$router.push(`/booklist/${this.keyword.trim()}`);
       },
 
+      // Navigate to book detail page
       goBookDetail(bookId) {
         this.$router.push(`/bookdetail/${bookId}`);
       }

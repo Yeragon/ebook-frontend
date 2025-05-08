@@ -1,35 +1,43 @@
+<!-- ResetPassword.vue Made by Xiaoyao Yu and Yuandong Li Start date: 12/04/2025 -->
 <template>
   <div class="reset-password-page">
     <div class="form-wrapper">
       <h1 class="logo">Ebooks</h1>
 
+      <!-- Password Reset Form  -->
       <el-form :model="form" :rules="rules" ref="resetForm" label-position="top" class="reset-form">
+        <!-- Email Field -->
         <el-form-item label="Email" prop="email" class="input-item">
           <el-input v-model="form.email" placeholder="Enter your registered email"></el-input>
         </el-form-item>
 
         <!-- <el-form-item label="Current Password" prop="oldPassword" class="input-item">
-  <el-input v-model="form.oldPassword" type="password" placeholder="Enter current password"></el-input>
-</el-form-item> -->
+        <el-input v-model="form.oldPassword" type="password" placeholder="Enter current password"></el-input>
+        </el-form-item> -->
 
-<el-form-item label="New Password" prop="newPassword" class="input-item">
-  <el-input v-model="form.newPassword" type="password" placeholder="Enter new password" show-password></el-input>
-</el-form-item>
+        <!-- New Password Field -->
+        <el-form-item label="New Password" prop="newPassword" class="input-item">
+        <el-input v-model="form.newPassword" type="password" placeholder="Enter new password" show-password></el-input>
+        </el-form-item>
 
-<el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
+        <!-- Confirm New Password Field -->
+        <el-form-item label="Confirm New Password" prop="confirmPassword" class="input-item">
   <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm new password" show-password></el-input>
-</el-form-item>
+        </el-form-item>
 
 
+        <!-- Go to Login page -->
         <div class="form-links">
           <el-link type="primary" @click="$router.push('/login')">Back to Login</el-link>
         </div>
 
+        <!-- Submit Reset button -->
         <el-form-item>
           <el-button type="primary" class="reset-button" @click="submitReset">Reset Password</el-button>
         </el-form-item>
       </el-form>
 
+      <!-- Go to Home page -->
       <el-button type="text" class="back-home" @click="$router.push('/')">← Back to Home</el-button>
     </div>
   </div>
@@ -42,6 +50,7 @@ export default {
   name: 'ResetPassword',
   data() {
     return {
+      // Form data model
       form: {
   email: '',
   oldPassword: '',
@@ -49,6 +58,7 @@ export default {
   confirmPassword: ''
 },
 
+ // Validation rules for the form
 rules: {
   email: [
     { required: true, message: 'Please input your registered email', trigger: 'blur' },
@@ -66,6 +76,7 @@ rules: {
     { required: true, message: 'Please confirm your new password', trigger: 'blur' },
     {
       validator: (rule, value, callback) => {
+        // Confirm new password matches
         if (value !== this.form.newPassword) {
           callback(new Error('Passwords do not match'));
         } else {
@@ -80,20 +91,25 @@ rules: {
     }
   },
   methods: {
+    // Submit password reset request
     async submitReset() {
   this.$refs.resetForm.validate(async (valid) => {
     if (valid) {
+      // Final check before API call
       if (this.form.newPassword !== this.form.confirmPassword) {
         this.$message.error('New passwords do not match.');
         return;
       }
 
       try {
+        // Send password change request to backend
         await request.post('/changepassword', {
           email: this.form.email,
           // oldPassword: this.form.oldPassword,
           newPassword: this.form.newPassword
         });
+
+        // Notify user and redirect to login
         this.$message.success('Password changed successfully. Please login again.');
         this.$router.push('/login');
       } catch (error) {

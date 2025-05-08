@@ -1,7 +1,7 @@
-<!-- src/views/BookDetailUnlogged.vue -->
+<!-- src/views/BookDetailUnlogged.vue Made by YuandongLi  Start date:14/04/2015-->
 <template>
   <div class="book-detail-unlogged">
-    <!-- 顶部栏 -->
+    <!-- Top header with logo and user actions -->
     <header class="header">
       <h1 class="logo" @click="$router.push('/')">Ebooks</h1>
       <div class="header-actions">
@@ -10,7 +10,7 @@
       </div>
     </header>
 
-    <!-- 书籍详情 -->
+    <!-- Book detail section -->
     <div class="book-info">
       <el-image :src="book.coverURL" style="width: 200px; height: 300px;"></el-image>
       <div class="book-meta">
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <!-- 提示栏 -->
+    <!-- Notice alert prompting user to log in for more actions -->
     <div class="notice">
       <el-alert
         title="Login to borrow, comment, and add to wishlist!"
@@ -45,11 +45,13 @@ export default {
     const route = useRoute();
     const book = ref({});
 
+    // Fetch book data based on route parameter (book ID)
     const fetchBookDetail = async () => {
       try {
         const bookId = route.params.id;
         const res = await request.get(`/ebook/${bookId}`);
-        // 检查返回的数据是否看起来像是合法图书
+        
+        // Validate response structure
         if (res.coverURL) {
           book.value = res;
         } else {
@@ -63,6 +65,7 @@ export default {
       }
     };
 
+    // Automatically fetch book details when component is mounted
     onMounted(() => {
       fetchBookDetail();
     });

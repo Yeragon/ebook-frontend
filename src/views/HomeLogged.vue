@@ -1,4 +1,4 @@
-<!-- src/views/HomeLogged.vue -->
+<!-- src/views/HomeLogged.vue  Made by Yuandong Li and Xiaoyao Yu Start date:12/04/2025-->
 <template>
   <div class="home-logged-page">
     <!-- Header -->
@@ -113,12 +113,18 @@ export default {
   name: 'HomeLogged',
   data() {
     return {
-      Refresh,//绑定图标
+      //Icons
+      Refresh,
       Search,
+      // Current logged-in user information
       currentUser: {},
+      // Search input binding
       searchQuery: '',
+      // Recommended books for display
       recommendedBooks: [],
+       // Books that are due to expire soon
       dueSoonList: [],
+      // Hardcoded book categories with sample images
       classifications: [
       {
     name: 'History',
@@ -154,19 +160,24 @@ export default {
     };
   },
   created() {
+    // Load user data from local storage on component creation
     const userData = localStorage.getItem('currentUser');
     if (userData) {
       this.currentUser = JSON.parse(userData);
     }
+    // Load recommended and due-soon books
     this.refreshBooks();
     this.fetchDueSoon();
   },
   methods: {
+    // Logout the user and clear session
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
       this.$router.push('/');
     },
+
+    // Fetch and shuffle recommended books
     async refreshBooks() {
       try {
         const response = await request.get('/books');
@@ -178,6 +189,7 @@ export default {
       }
     },
     
+    // Load books that will expire within 30 days
     fetchDueSoon() {
   const userData = localStorage.getItem('currentUser');
   if (!userData) return;
@@ -204,28 +216,30 @@ export default {
     rentalStartDate: book.rentalStartDate,
     expirationDate: book.expirationDate
   }))
-    .sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)) // 排序，按到期日升序
-    .slice(0, 5); // 只取最近的5本书
+    .sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)) 
+    .slice(0, 5); 
   },
 
+    // Navigate to detailed book page
     goBookDetail(bookId) {
       this.$router.push(`/bookdetail/${bookId}`);
     },
+
+    // Navigate to category page with category name as param
     goToCategory(categoryName) {
       this.$router.push({ path: `/category/${categoryName}` });
     },
 
+    // Perform book search and redirect
     async searchBooks() {
     if (this.searchQuery.trim()) {
       try {
-        // 发送请求到后端的搜索接口
         const response = await request.get('/search/books', {
           params: { query: this.searchQuery.trim() }
         });
-        // 将搜索结果保存到 searchResults 中
+        
         this.searchResults = response;
 
-        // 跳转到搜索结果页面，并将搜索的关键词传递过去
         this.$router.push(`/booklist/${this.searchQuery.trim()}`);
       } catch (error) {
         ElMessage.error('Search failed, please try again.');

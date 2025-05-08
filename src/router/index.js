@@ -1,7 +1,8 @@
+// Made by Yuandong Li date:20/04/2025 
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 
-// 引入各个页面
+// Import each page 
 import Home from '@/views/Home.vue';
 import HomeLogged from '@/views/HomeLogged.vue';
 import Login from '@/views/Login.vue';
@@ -34,7 +35,7 @@ const routes = [
   { path: '/editpage', name: 'EditPage', component: EditPage },
   { path: '/booklist/:keyword', name: 'BookList', component: BookList },
   { path: '/booklistunlogged/:keyword', name: 'BookListUnlogged', component: BookListUnlogged },
-  // 兜底处理：访问不存在的路径，自动跳转回首页
+  // Handle undefined routes by redirecting to the home page
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
 

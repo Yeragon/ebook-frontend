@@ -1,30 +1,39 @@
+<!-- Register.vue Made by Xiaoyao Yu and Yuandong Li Start date: 12/04/2025 -->
 <template>
   <div class="register-page">
     <div class="form-wrapper">
       <h1 class="logo">Ebooks</h1>
 
+      <!-- Registration Form with validation -->
       <el-form :model="form" :rules="rules" ref="registerForm" label-position="top" class="register-form">
+        
+        <!-- Email Field -->
         <el-form-item label="Email" prop="email" class="input-item">
           <el-input v-model="form.email" placeholder="Enter your email address"></el-input>
         </el-form-item>
 
+         <!-- Password Field -->
         <el-form-item label="Password" prop="password" class="input-item">
           <el-input v-model="form.password" type="password" placeholder="Enter your password" show-password></el-input>
         </el-form-item>
 
+        <!-- Confirm Password Field -->
         <el-form-item label="Confirm Password" prop="confirmPassword" class="input-item">
           <el-input v-model="form.confirmPassword" type="password" placeholder="Confirm your password" show-password></el-input>
         </el-form-item>
 
+        <!-- Navigate to Login Page -->
         <div class="form-links">
           <el-link type="primary" @click="$router.push('/login')">Back to Login</el-link>
         </div>
 
+        <!-- Submit Register Button -->
         <el-form-item>
           <el-button type="primary" class="register-button" @click="submitRegister">Register</el-button>
         </el-form-item>
       </el-form>
 
+      <!-- Back to Home Button -->
       <el-button type="text" class="back-home" @click="$router.push('/')">← Back to Home</el-button>
     </div>
   </div>
@@ -37,12 +46,14 @@ export default {
   name: 'Register',
   data() {
     return {
+      // Form model for input binding
       form: {
         email: '',
         password: '',
         confirmPassword: ''
       },
       rules: {
+        // Form validation rules
         email: [
           { required: true, message: 'Please input your email address', trigger: 'blur' },
           { type: 'email', message: 'Please input a valid email address', trigger: ['blur', 'change'] }
@@ -54,6 +65,7 @@ export default {
         confirmPassword: [
           { required: true, message: 'Please confirm your password', trigger: 'blur' },
           { validator: (rule, value, callback) => {
+             // Check if password and confirm password match
               if (value !== this.form.password) {
                 callback(new Error('Passwords do not match'));
               } else {
@@ -65,14 +77,17 @@ export default {
     }
   },
   methods: {
+    // Submit registration request
     async submitRegister() {
   this.$refs.registerForm.validate(async (valid) => {
     if (valid) {
       try {
+        // Send registration data to backend
         await request.post('/register', {
           email: this.form.email,
           password: this.form.password
         });
+        // Show success message and redirect to login page
         this.$message.success('Registration successful! Please login.');
         this.$router.push('/login');
       } catch (error) {

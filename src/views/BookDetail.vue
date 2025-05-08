@@ -1,7 +1,7 @@
-<!-- src/views/BookDetail.vue -->
+<!-- src/views/BookDetail.vue  Made by Yuandong Li and XioayaoYu Start date:15/04/2015-->
 <template>
   <div class="book-detail-container">
-    <!-- Header -->
+    <!-- Top header with logo and user actions -->
     <div class="header">
       <h1 class="logo" @click="$router.push('/dashboard')">Ebooks</h1>
       <div class="header-actions">
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <!-- 留言弹窗 -->
+    <!-- Comment dialog -->
     <el-dialog title="Leave a Comment" v-model="commentDialogVisible">
       <el-input
         type="textarea"
@@ -43,7 +43,7 @@
       </template>
     </el-dialog>
 
-    <!-- 最新评论 -->
+    <!-- Latest comments section -->
     <div class="section-header">
       <h2>Latest Comments</h2>
     </div>
@@ -64,11 +64,15 @@ import { ElMessage } from 'element-plus';
 
 export default {
   name: 'BookDetail',
+
+   // Reactive local state for user info
   data() {
   return {
     currentUser: {}
   };
 },
+
+// Load user info from localStorage when component is created
 created() {
     const userData = localStorage.getItem('currentUser');
     if (userData) {
@@ -76,6 +80,7 @@ created() {
     }
   },
 
+  // Handle URL query parameters on mount
   mounted() {
     console.log('Route query:', this.$route.query);
   if (this.$route.query.showComment === 'true') {
@@ -84,9 +89,9 @@ created() {
 },
 
   methods: {
+     // Show comment modal & remove query param to prevent auto-trigger next time
     openCommentDialog() {
-    this.showCommentModal = true; // 控制你的弹窗显示
-    // 删除 ?showComment=true，避免再次打开
+    this.showCommentModal = true; 
     this.$router.replace({ 
       name: this.$route.name, 
       params: this.$route.params, 
@@ -94,6 +99,7 @@ created() {
     });
   },
 
+    // Clear user session and redirect to login
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
@@ -112,10 +118,11 @@ created() {
     const userAvatar = ref('https://via.placeholder.com/100');
     const userId = JSON.parse(localStorage.getItem('currentUser'))?.userId;
 
+    // Fetch book detail from server
     const fetchBookDetail = async () => {
   try {
     const res = await request.get(`/ebook/${bookId}`);
-    const data = res.data || res; // 兼容有无 `.data`
+    const data = res.data || res;
     if (data?.coverURL) {
       book.value = data;
     } else {
@@ -127,6 +134,8 @@ created() {
   }
 };
 
+
+    // Fetch latest comments
     const fetchComments = async () => {
       try {
         const res = await request.get(`/review/list?ebookId=${bookId}`);
@@ -136,6 +145,7 @@ created() {
       }
     };
 
+    // Loan book API call
     const loanBook = async () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userId = currentUser?.userId;
@@ -158,7 +168,8 @@ created() {
     }
 };
 
-const addToWishlist = async () => {
+    // Add book to user's wishlist
+    const addToWishlist = async () => {
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const userId = currentUser?.userId;
@@ -182,7 +193,7 @@ const addToWishlist = async () => {
 
 };
 
-
+// Submit a new comment
 const submitComment = async () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   const userId = currentUser?.userId;
@@ -199,10 +210,10 @@ const submitComment = async () => {
 
   try {
     await request.post('/review/add', {
-      userId,                // ✅ 添加 userId
+      userId,                
       ebookId: bookId,
       rating: 5,
-      content: newComment.value   // ✅ 修正字段名为 content，确保和后端对应
+      content: newComment.value   
     });
 
     ElMessage.success('Comment added!');
@@ -215,6 +226,7 @@ const submitComment = async () => {
 };
 
 
+    // Fetch data on mount
     onMounted(() => {
       fetchBookDetail();
       fetchComments();

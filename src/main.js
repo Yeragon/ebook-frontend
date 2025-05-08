@@ -1,3 +1,4 @@
+//Made by Xiaoyao Yu Start date: 20/04/2025
 // src/main.js
 import { createApp } from 'vue';
 import App from './App.vue';
@@ -6,10 +7,10 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import request from '@/utils/request';
 
-// 创建 Vue 实例
+// Create Vue instance
 const app = createApp(App);
 
-// fake login 用于开发测试，正式版可移除
+// Fake login for development/testing, can be removed in production
 if (!localStorage.getItem('token')) {
   localStorage.setItem('token', 'aaaaaaa');
   localStorage.setItem('currentUser', JSON.stringify({
@@ -21,12 +22,12 @@ if (!localStorage.getItem('token')) {
   }));
 }
 
-// 配置全局 axios
+// Configure global axios instance
 app.config.globalProperties.$axios = request;
 
-// 挂载插件
+// Mount plugins
 app.use(router);
 app.use(ElementPlus);
 
-// 挂载应用
+// Mount the app to the DOM
 app.mount('#app');
