@@ -1,7 +1,20 @@
-<!-- src/views/BookDetailUnlogged.vue -->
+<!--
+  FileName：BookDetailUnlogged.vue
+  Creator：Yuandong Li, Xiaoyao Yu
+  Create time：11/04/2025
+  Last modified time：08/05/2025
+  Module：User side - Unlogged status ebook info page
+  Functions：
+  1. Display detailed information of an ebook (cover, title, author, category, description);
+  2. Provide login entrance for users who are not authenticated;
+  3. Show warning alert that login is required for loaning, commenting, and adding to wishlist;
+  4. Retrieve ebook data from the backend by ebook_id from route parameters;
+  5.Click logo "EBooks" and move to Home page.
+-->
+
 <template>
   <div class="book-detail-unlogged">
-    <!-- 顶部栏 -->
+    <!-- Header -->
     <header class="header">
       <h1 class="logo" @click="$router.push('/')">Ebooks</h1>
       <div class="header-actions">
@@ -10,7 +23,7 @@
       </div>
     </header>
 
-    <!-- 书籍详情 -->
+    <!-- Book info -->
     <div class="book-info">
       <el-image :src="book.coverURL" style="width: 200px; height: 300px;"></el-image>
       <div class="book-meta">
@@ -21,7 +34,7 @@
       </div>
     </div>
 
-    <!-- 提示栏 -->
+    <!-- Remind section -->
     <div class="notice">
       <el-alert
         title="Login to borrow, comment, and add to wishlist!"
@@ -33,6 +46,20 @@
 </template>
 
 <script>
+/*
+  Creator：Yuandong Li, Xiaoyao Yu
+  Create time：11/04/2025
+  Functions description：
+    This script section implements the following logic:
+      - fetchBookDetail：Fetch ebook data based on ebook_id from route parameters;
+      - Display static ebook details for unlogged users;
+      - Provide alert and login navigation functionality;
+
+  Tech Stack:
+    - Vue 3 Composition API
+    - Element Plus UI library
+    - Route parameters passing, Axios asynchronous request
+*/
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'; 
@@ -41,15 +68,15 @@ import request from '@/utils/request';
 
 export default {
   setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const book = ref({});
+    const router = useRouter(); // Used for programmatic navigation
+    const route = useRoute(); // Access current route info
+    const book = ref({});// Reactive state for ebook detail
 
+    // fetchBookDetail：Fetch ebook details from backend via ebookId in route
     const fetchBookDetail = async () => {
       try {
         const bookId = route.params.id;
         const res = await request.get(`/ebook/${bookId}`);
-        // 检查返回的数据是否看起来像是合法图书
         if (res.coverURL) {
           book.value = res;
         } else {
@@ -63,6 +90,7 @@ export default {
       }
     };
 
+    // onMounted lifecycle：Load ebook data after component is mounted
     onMounted(() => {
       fetchBookDetail();
     });

@@ -1,3 +1,15 @@
+<!--
+  FileName：Category.vue
+  Creator：Xiaoyao Yu
+  Create time：12/04/2025
+  Last modified time：20/04/2025
+  Module：User side - Category Books Page
+  Functions：
+    1. Display a list of books under a specific category selected by the user;
+    2. Dynamically fetch books based on category name from route parameters;
+    3. Show basic book details including cover, title, and author;
+    4. Provide navigation back to the home page.
+-->
 <template>
   <div class="category-page">
     <!-- Header -->
@@ -29,19 +41,29 @@
 <script>
 import request from '@/utils/request';
 
+/*
+  Creator：Xiaoyao Yu
+  Functions description：
+    - Extracts the category name from the route parameters;
+    - Fetches the list of books under the given category via API;
+    - Handles loading failures with user-friendly error messages;
+    - Renders book covers, titles, and authors in a card layout.
+*/
 export default {
   name: "Category",
   data() {
     return {
-      categoryName: '',
-      books: []
+      categoryName: '', // Current category name from route param
+      books: [] // List of books in this category
     }
   },
   created() {
+    // Extract category name from route params and fetch books
     this.categoryName = this.$route.params.name;
     this.fetchCategoryBooks();
   },
   methods: {
+    // Fetch book list based on category from backend API
     async fetchCategoryBooks() {
       try {
         const res = await request.get(`/books/category/${this.categoryName}`);
