@@ -1,5 +1,24 @@
+<!--
+  FileName: MyAccount.vue
+  Creator: Yuandong Li, Xiaoyao Yu
+  Created time: 15/04/2025
+  Last Modified: 08/05/2025
+  Module: User Side - My Account Page
+  Functionality:
+    - Display the current user's profile information
+    - User can edit their personal information
+    - Offer four tabs with different content 
+    - Provide links return to dashboard
+    - Display Books that user has added to wishlist
+    - Users can loan books and cancel favorite by clicking different buttons in wishlist
+    - Display books that users have loan in OnLoan page
+    - Click the comment button move to the specific bookdetail page
+    - Display books that are about expire and offer the "Return" button
+    - Display rental start date and expiration date in wishlist and due soon page  
+-->
 <template>
   <div class="my-account-page">
+     <!-- Header section with app logo -->
     <header class="header">
       <h1 class="logo" @click="goHome">Ebooks</h1>
       <el-button :icon="moneyIcon" circle style="border: none; cursor: pointer;" />
@@ -8,11 +27,13 @@
     <div class="content">
       <h2 class="title">My Account</h2>
       <el-avatar size="large" class="avatar" :src="user.avatar || ''"></el-avatar>
-
+      <!-- Tab Navigation  -->
       <el-tabs v-model="activeTab" class="tabs" @tab-change="handleTabChange">
+         <!-- Profile Tab: Display non-editable user info -->
         <el-tab-pane label="Profile" name="profile">
           <el-form :model="user" label-width="150px" class="profile-form">
             <el-row :gutter="20">
+              <!-- Generate profile fields from profileFields map -->
               <el-col :span="12" v-for="(value, key) in profileFields" :key="key">
                 <el-form-item :label="value.label">
                   <el-input :value="user[key]" disabled></el-input>
@@ -20,13 +41,14 @@
               </el-col>
             </el-row>
           </el-form>
-
+          <!-- Buttons: Edit Profile and Exit Account -->
           <div class="button-group">
             <el-button type="primary" @click="goToEdit">Edit</el-button>
             <el-button type="danger" @click="logout">Exit</el-button>
           </div>
         </el-tab-pane>
 
+        <!-- Wishlist Tab: Show favorited books with actions -->
         <el-tab-pane label="Wishlist" name="wishlist">
           <el-table :data="filteredWishlist" border>
             <el-table-column prop="title" label="Book" align="center" />
@@ -60,6 +82,7 @@
           </el-table>
         </el-tab-pane>
 
+        <!-- Due Soon Tab: Books close to expiration with return option -->
         <el-tab-pane label="DUE Soon" name="duesoon">
           <el-table :data="dueSoonList" border>
             <el-table-column prop="title" label="Book" align="center" />
@@ -87,19 +110,22 @@
           </el-table>
         </el-tab-pane>
 
+        <!-- On Loan Tab: List of currently loaned books -->
         <el-tab-pane label="On loan" name="onloan">
           <el-table :data="onLoanList" border>
             <el-table-column prop="title" label="Book" align="center" />
             <el-table-column prop="author" label="Author" align="center" />
             <el-table-column label="Rental Start Date" align="center">
-  <template #default="scope">
-    {{ formatDate(scope.row.rentalStartDate) }}
-  </template>
-</el-table-column>            <el-table-column label="Expiration Date" align="center">
-  <template #default="scope">
-    {{ formatDate(scope.row.expirationDate) }}
-  </template>
-</el-table-column>            <el-table-column label="Comment" align="center">
+            <template #default="scope">
+                {{ formatDate(scope.row.rentalStartDate) }}
+            </template>
+            </el-table-column>            
+            <el-table-column label="Expiration Date" align="center">
+            <template #default="scope">
+                {{ formatDate(scope.row.expirationDate) }}
+            </template>
+           </el-table-column>             
+           <el-table-column label="Comment" align="center">
               <template #default="scope">
                 <el-button
                   :icon="chatIcon"
@@ -112,7 +138,8 @@
           </el-table>
         </el-tab-pane>
       </el-tabs>
-      <!-- 取消收藏 弹窗放这里，tabs 外部 -->
+      
+      <!-- Confirm unfavorite dialog -->
       <el-dialog
   title="Remove from Wishlist"
   :model-value="confirmDialogVisible"
@@ -126,7 +153,8 @@
     <el-button type="primary" @click="confirmUnfavorite">Confirm</el-button>
   </template>
 </el-dialog>
-<!-- 还书 弹窗放这里，tabs 外部 -->
+
+ <!-- Confirm return book dialog -->
 <el-dialog
   title="Return Book"
   :model-value="confirmReturnDialogVisible"
@@ -146,6 +174,28 @@
 </template>
 
 <script>
+/*
+  FileName: MyAccount.vue
+  Creator: Yuandong Li, Xiaoyao Yu
+  Create time: 15/04/2025
+  Last Modified: 08/05/2025
+  Module: User Side - My Account Page
+
+  Functions Description:
+    - Fetch and display user profile information.
+    - Handle tab switching to load corresponding data (wishlist, on loan, due soon).
+    - Provide interactions like editing profile, loaning books, returning books, and removing favorites.
+    - Use Element Plus components (tabs, forms, tables, dialogs) for UI.
+    - Handle date formatting and API integration via axios.
+
+  Tech Stack:
+    - Vue 3 (Options API)
+    - Element Plus UI library
+    - Axios (via custom `request` instance)
+    - Day.js for date formatting
+    - LocalStorage for user state persistence
+*/
+
 import { h } from 'vue';
 import { Money } from '@element-plus/icons-vue';
 import { ChatLineRound } from '@element-plus/icons-vue';
@@ -157,6 +207,7 @@ export default {
   name: 'MyAccount',
   data() {
     return {
+      //user info initialize
       activeTab: 'profile',
       user: {
         email: '',
@@ -185,6 +236,7 @@ export default {
     };
   },
   created() {
+    // Load user and fetch all relevant data when component is created
     const userData = localStorage.getItem('currentUser');
     if (userData) {
       const user = JSON.parse(userData);
@@ -195,26 +247,31 @@ export default {
     }
   },
   computed: {
+    // Filter out books that are not marked as favorite
     filteredWishlist() {
       return this.wishlist.filter(book => book.favorite !== false);
     }
   },
   methods: {
-
+    // Format date to readable format
     formatDate(dateStr) {
     return dayjs(dateStr).format('DD MMM YYYY');
   },
+  // Navigate to dashboard
     goHome() {
       this.$router.push('/dashboard');
     },
+    // Logout and redirect to login page
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
       this.$router.push('/');
     },
+    // Go to profile edit page
     goToEdit() {
       this.$router.push('/editpage');
     },
+    // Fetch latest user info from backend
     async fetchUserInfo(userId) {
       const res = await request.get(`/user/info/${userId}`);
         this.user = {
@@ -227,6 +284,7 @@ export default {
         };
       
     },
+     // Handle tab switch and load data for specific tab
     async handleTabChange(tab) {
       const user = JSON.parse(localStorage.getItem('currentUser'));
       if (!user || !user.userId) return;
@@ -235,57 +293,56 @@ export default {
       if (tab === 'onloan') this.loadOnLoan();
       if (tab === 'duesoon') this.loadDueSoon(user.userId);
     },
+    // Load user's wishlist from server
     async loadWishlistFromServer(userId) {
       const res = await request.get(`/wishlist/${userId}`);
       this.wishlist = res;    },
+      // Load currently loaned books
     async loadOnLoan() {
       const user = JSON.parse(localStorage.getItem('currentUser'));
+      //Verify user is exist or not
       if (!user?.userId) return;
       const res = await request.get(`/loan/active/${user.userId}`);
       this.onLoanList = res;
     },
+    // Load books that are due soon
     async loadDueSoon(userId) {
       const res = await request.get(`/loan/due-soon/${userId}`);
       this.dueSoonList = res;
 
     },
-
+    // Attempt to loan a book from wishlist
     async loanBook(book) {
      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       const userId = currentUser?.userId;
 
+      //Check user already logged in or not
   if (!userId) {
     this.$message.error('User is not logged in!');
     return;
   }
 
-
-    if (!userId) {
-    this.$message.error('User is not logged in!');
-    return;
-     }
-
      try {
-    // 因为 request.js 拦截器已经处理了 code !== 200 和错误弹窗
+    //Request book from backend
     await request.post('/loan/borrow', {
       userId,
       ebookId: book.ebookId
     });
-
     this.$message.success('Book loaned successfully!');
 
-    // 更新该书状态
+    // update the status of book(available or not)
     const target = this.wishlist.find(item => item.ebookId === book.ebookId);
     if (target) target.available = false;
 
-    // 可选：刷新 onLoan & dueSoon 列表
+    // refresh onLoan & dueSoon list
     await this.loadOnLoan();
     await this.loadDueSoon(userId);
   } catch (error) {
-    // 不用重复弹窗，request.js 已处理错误提示
+    
     console.warn('Loan book failed:', error);
   }
 },
+// Trigger unfavorite confirmation dialog
     toggleFavorite(book) {
       console.log('Clicked book:', book);
       this.selectedBook = book;
@@ -293,6 +350,7 @@ export default {
       console.log('Dialog should be visible:', this.confirmDialogVisible);
     },
 
+    // Confirm unfavorite action
     async confirmUnfavorite() {
   if (!this.selectedBook) return;
 
@@ -300,17 +358,16 @@ export default {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user || !user.userId) return;
 
-    // 向后端发送取消收藏请求
+    // sent remove request to backend
     await request.delete(`/wishlist/remove`, {
       params: {
     userId: user.userId,
     ebookId: this.selectedBook.ebookId
   }
     });
-
+    //Show the message if it is successful
     this.$message.success(`"${this.selectedBook.title}" has been removed from your wishlist.`);
 
-      // 重新拉取 wishlist
       await this.loadWishlistFromServer(user.userId);
      } catch (error) {
         this.$message.error('Failed to remove from wishlist.');
@@ -320,24 +377,30 @@ export default {
      }
     },
 
+    // Cancel unfavorite action
     cancelUnfavorite() {
+      //close the dialog
       this.confirmDialogVisible = false;
       this.selectedBook = null;
     },
 
+    // Navigate to book detail page and open comment section
     commentBook(book) {
       this.$router.push({ name: 'BookDetail', params: { id: book.id }, query: { showComment: 'true' } });
     },
+    // Trigger return book confirmation dialog
     returnBook(book) {
       this.selectedReturnBook = book;
       this.confirmReturnDialogVisible = true;
     },
 
+    // Cancel return action
     cancelReturn() {
+      //close the dialog
   this.confirmReturnDialogVisible = false;
   this.selectedReturnBook = null;
 },
-
+// Confirm return action
 async confirmReturn() {
   if (!this.selectedReturnBook) return;
 
@@ -345,6 +408,7 @@ async confirmReturn() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user || !user.userId) return;
 
+    //request return the book
     await request.post('/loan/return', {
       userId: user.userId,
       ebookId: this.selectedReturnBook.ebookId
@@ -353,7 +417,7 @@ async confirmReturn() {
     this.$message.success(`"${this.selectedReturnBook.title}" has been returned successfully.`);
 
     await this.loadDueSoon(user.userId);
-    await this.loadOnLoan(); // 可选，如果你希望同时刷新 On Loan 列表
+    await this.loadOnLoan(); // refresh On Loan list
 
   } catch (error) {
     this.$message.error('Failed to return the book.');

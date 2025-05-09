@@ -1,4 +1,18 @@
-<!-- src/views/BookDetail.vue -->
+<!--
+  FileName：BookDetail.vue
+  Creator：Yuandong Li, Xiaoyao Yu
+  Create time：11/04/2025
+  Last modified time：08/05/2025
+  Module：User side - Logged status ebook info page
+  Functions：
+  1. Display the information of an ebook (cover, title, author, category, description);
+  2. Offer multiple interaction buttons for users (Loan, Add to Wishlist, Comment);
+  3. Display user-generated comments and support adding new ones;
+  4. Fetch ebook info and comments data from the backend;
+  5. Handle login status and provide logout functionality;
+  6. Click logo "EBooks" to navigate to the dashboard.
+-->
+
 <template>
   <div class="book-detail-container">
     <!-- Header -->
@@ -29,7 +43,7 @@
       </div>
     </div>
 
-    <!-- 留言弹窗 -->
+    <!-- Comment Dialog -->
     <el-dialog title="Leave a Comment" v-model="commentDialogVisible">
       <el-input
         type="textarea"
@@ -43,7 +57,7 @@
       </template>
     </el-dialog>
 
-    <!-- 最新评论 -->
+    <!-- Latest comment -->
     <div class="section-header">
       <h2>Latest Comments</h2>
     </div>
@@ -57,6 +71,25 @@
 </template>
 
 <script>
+/*
+  Creator：Yuandong Li, Xiaoyao Yu
+  Create time：04/11/2025
+  Functions description：
+    This script section implements the following logic:
+      - fetchBookDetail：Fetch ebook detail from backend by ebook_id from route;
+      - fetchComments：Fetch all user comments for the current ebook;
+      - loanBook：Borrow the ebook for current logged-in user;
+      - addToWishlist：Add the ebook into the current user's wishlist;
+      - submitComment：Post a new comment for the ebook;
+      - logout：Clear local storage and redirect to home;
+      - openCommentDialog：Open the comment modal and clear query string.
+
+  Tech Stack:
+    - Vue 3 Composition API
+    - Element Plus UI library
+    - Route parameters passing, Axios asynchronous requests
+*/
+
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import request from '@/utils/request';
@@ -64,18 +97,23 @@ import { ElMessage } from 'element-plus';
 
 export default {
   name: 'BookDetail',
+
+  //data is used to store user data
   data() {
   return {
     currentUser: {}
   };
 },
+
+// created for initializing the current authenticated user data
 created() {
     const userData = localStorage.getItem('currentUser');
     if (userData) {
       this.currentUser = JSON.parse(userData);
     }
   },
-
+ 
+  // Deal with the first load of this page(including check query)
   mounted() {
     console.log('Route query:', this.$route.query);
   if (this.$route.query.showComment === 'true') {
@@ -84,9 +122,9 @@ created() {
 },
 
   methods: {
+    //Open comment dialog and clean current query in URL
     openCommentDialog() {
-    this.showCommentModal = true; // 控制你的弹窗显示
-    // 删除 ?showComment=true，避免再次打开
+    this.showCommentModal = true; 
     this.$router.replace({ 
       name: this.$route.name, 
       params: this.$route.params, 
@@ -94,6 +132,7 @@ created() {
     });
   },
 
+    // User logout and move to Home page
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
@@ -102,6 +141,7 @@ created() {
   },
 
   setup() {
+    //Vue 3 Composition API
     const router = useRouter();
     const route = useRoute();
     const bookId = route.params.id;
@@ -115,7 +155,7 @@ created() {
     const fetchBookDetail = async () => {
   try {
     const res = await request.get(`/ebook/${bookId}`);
-    const data = res.data || res; // 兼容有无 `.data`
+    const data = res.data || res;
     if (data?.coverURL) {
       book.value = data;
     } else {
@@ -199,10 +239,10 @@ const submitComment = async () => {
 
   try {
     await request.post('/review/add', {
-      userId,                // ✅ 添加 userId
+      userId,                
       ebookId: bookId,
       rating: 5,
-      content: newComment.value   // ✅ 修正字段名为 content，确保和后端对应
+      content: newComment.value  
     });
 
     ElMessage.success('Comment added!');
