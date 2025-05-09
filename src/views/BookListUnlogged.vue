@@ -133,7 +133,7 @@
      * Only shows read-only information; no borrowing or adding wishlist or comment available without login.
      * @param {String} bookId - ID of the selected book to view in detail (unlogged mode)
      * @author Xiaoyao Yu
-     * @date 2025-05-08
+     * @date 2025-04-12
      */
       goBookDetail(bookId) {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
