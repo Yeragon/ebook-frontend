@@ -106,6 +106,17 @@
 </template>
 
 <script>
+/*
+  Author: Xiaoyao Yu
+  Created: April 11, 2025
+  Last Modified: May 8, 2025
+  Module: Home Page (Logged-in View) -> MyAccountView
+  Description:
+    - Displays homepage for logged-in users with personalized features
+    - Shows recommended books with refresh functionality
+    - Includes categorized book lists with image previews
+    - Provides logout, search, navigation to book detail and category pages
+*/
 import request from '@/utils/request';
 import { Search, Refresh } from '@element-plus/icons-vue'
 
@@ -113,7 +124,7 @@ export default {
   name: 'HomeLogged',
   data() {
     return {
-      Refresh,//绑定图标
+      Refresh,//Binding icon
       Search,
       currentUser: {},
       searchQuery: '',
@@ -153,6 +164,7 @@ export default {
       ]
     };
   },
+  // Load user info, recommended four ebooks when page is created
   created() {
     const userData = localStorage.getItem('currentUser');
     if (userData) {
@@ -162,11 +174,19 @@ export default {
     this.fetchDueSoon();
   },
   methods: {
+    /**
+     * @method logout
+     * @description Clears user session and redirects to the public homepage with a success message.
+     */
     logout() {
       localStorage.removeItem('currentUser');
       this.$message.success('Logged out successfully!');
       this.$router.push('/');
     },
+    /**
+     * @method refreshBooks
+     * @description Fetches a full list of books and randomly selects 4 to show as recommendations.
+     */
     async refreshBooks() {
       try {
         const response = await request.get('/books');
@@ -177,7 +197,11 @@ export default {
         console.error('Failed to fetch books', error);
       }
     },
-    
+    /**
+     * @method fetchDueSoon
+     * @description Fetches user's borrowed books and filters those due within the next 30 days.
+     * Uses localStorage as the data source and displays the top 5 sorted by expiration date.
+     */
     fetchDueSoon() {
   const userData = localStorage.getItem('currentUser');
   if (!userData) return;
@@ -204,28 +228,34 @@ export default {
     rentalStartDate: book.rentalStartDate,
     expirationDate: book.expirationDate
   }))
-    .sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)) // 排序，按到期日升序
-    .slice(0, 5); // 只取最近的5本书
+    .sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate)) // Sort in ascending order by expiration date
+    .slice(0, 5); // Only take the most recent five books
   },
-
+    /**
+     * @method goBookDetail
+     * @description Navigates to the detail page of the selected book (logged-in version).
+     * @param {String} bookId - The ID of the selected book
+     */
     goBookDetail(bookId) {
       this.$router.push(`/bookdetail/${bookId}`);
     },
     goToCategory(categoryName) {
       this.$router.push({ path: `/category/${categoryName}` });
     },
-
+    /**
+     * @method searchBooks
+     * @description Sends the current keyword to the backend search endpoint and redirects to the result page.
+     * If the keyword is empty or the request fails, shows a warning or error message.
+     */
     async searchBooks() {
     if (this.searchQuery.trim()) {
       try {
-        // 发送请求到后端的搜索接口
+        // Send the request to the search interface at the back-end
         const response = await request.get('/search/books', {
           params: { query: this.searchQuery.trim() }
         });
-        // 将搜索结果保存到 searchResults 中
+        
         this.searchResults = response;
-
-        // 跳转到搜索结果页面，并将搜索的关键词传递过去
         this.$router.push(`/booklist/${this.searchQuery.trim()}`);
       } catch (error) {
         ElMessage.error('Search failed, please try again.');

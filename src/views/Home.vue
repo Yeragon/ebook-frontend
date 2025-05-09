@@ -70,6 +70,18 @@
 </template>
 
 <script>
+/*
+ Author: Xiaoyao Yu
+  Created: April 9, 2025
+  Last Modified: May 8, 2025
+  Module: User Side - Home Page (Unlogged View)
+  Description:
+    - Displays the homepage for unregistered or logged-out users
+    - Allows searching for books with keyword input
+    - Shows a list of recommended books (randomly selected)
+    - Shows categorized book groups with images and counts
+    - Enables navigation to login, category, and book detail pages
+*/
 import request from '@/utils/request';
 import { Search, Refresh } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -116,10 +128,19 @@ export default {
       ]
     };
   },
+
+  // Fetch a new set of random recommended books when the component is created
   created() {
     this.refreshBooks();
   },
   methods: {
+     /**
+     * @method refreshBooks
+     * @description Fetches the list of all books from the backend and randomly selects 4 for recommendation.
+     * Called when the page loads and when the refresh button is clicked.
+     * @author Xiaoyao Yu
+     * @date 2025-04-08
+     */
     async refreshBooks() {
       try {
         const response = await request.get('/books');
@@ -134,22 +155,29 @@ export default {
     goToCategory(categoryName) {
       this.$router.push({ path: `/category/${categoryName}` });
     },
+
+    /**
+     * @method goBookDetail
+     * @description Navigates to the unlogged version of the book detail page when a book card is clicked.
+     * @param {String} bookId - The ID of the selected book to view details for (read-only mode for unlogged users)
+     * @author Xiaoyao Yu
+     * @date 2025-04-09
+     */
     goBookDetail(bookId) {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
       },
     
-
     async searchBooks() {
     if (this.searchQuery.trim()) {
       try {
-        // 发送请求到后端的搜索接口
+        // Send the request to the search interface at the back end
         const response = await request.get('/search/books', {
           params: { query: this.searchQuery.trim() }
         });
-        // 将搜索结果保存到 searchResults 中
+        // Save the search results to searchResults
         this.searchResults = response;
 
-        // 跳转到搜索结果页面，并将搜索的关键词传递过去
+        // Jump to the search results page and pass the search keywords there
         this.$router.push(`/booklistunlogged/${this.searchQuery.trim()}`);
       } catch (error) {
         ElMessage.error('Search failed, please try again.');

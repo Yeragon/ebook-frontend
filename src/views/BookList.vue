@@ -56,11 +56,25 @@
   </template>
   
   <script>
+/*
+  Author: Xiaoyao Yu
+  Created: April 10, 2025
+  Last Modified: May 8, 2025
+  Module: User Side - Book List Page (for logged-in users)
+  Description:
+    - Enables users to search for eBooks and view results
+    - Allows navigation to book detail pages
+    - Detects current logged-in user information and supports logout
+    - Reactively listens for changes in search keywords via route parameters
+*/
   import request from '@/utils/request';
   import { Search } from '@element-plus/icons-vue';
 
   
   export default {
+
+  // Lifecycle hook: called when the component is created; 
+  // loads user info and initiates search
     created() {
   const userData = localStorage.getItem('currentUser');
   if (userData) {
@@ -70,6 +84,8 @@
   this.keyword = this.$route.params.keyword || '';
   this.fetchBooks();
 },
+
+// Watcher: triggers new search when route keyword changes
 watch: {
   '$route.params.keyword': {
     immediate: true,
@@ -93,15 +109,32 @@ watch: {
     },
     
     methods: {
+      /**
+     * @method goHome
+     * @description Navigates to the user dashboard after login
+     * @author Xiaoyao Yu
+     * @date 2025-04-12
+     */
       goHome() {
         this.$router.push('/dashboard');
       },
-        
+       /**
+     * @method logout
+     * @description Logs the user out by clearing stored data and redirects to the homepage; shows success message
+     * @author Xiaoyao Yu
+     * @date 2025-04-12
+     */ 
       logout() {
         localStorage.removeItem('currentUser');
         this.$message.success('Logged out successfully!');
         this.$router.push('/');
       },
+      /**
+     * @method fetchBooks
+     * @description Sends request to backend to search books based on current keyword; updates result list accordingly
+     * @author Xiaoyao Yu
+     * @date 2025-04-12
+     */
       async fetchBooks() {
         try {
           const response = await request.get('/search/books', {
@@ -113,6 +146,12 @@ watch: {
           this.filteredBooks = [];
         }
       },
+      /**
+     * @method searchBooks
+     * @description Triggered when user clicks search or presses Enter; navigates to route with new keyword to update results
+     * @author Xiaoyao Yu
+     * @date 2025-04-12
+     */
       searchBooks() {
       if (!this.keyword.trim()) {
         this.$message.warning('Please enter a keyword.');
@@ -120,7 +159,13 @@ watch: {
         }
        this.$router.push(`/booklist/${this.keyword.trim()}`);
       },
-
+    /**
+     * @method goBookDetail
+     * @description Navigates to the book detail page using the selected book's ID as route param
+     * @param {String} bookId - The ID of the selected book to view in detail
+     * @author Xiaoyao Yu
+     * @date 2025-04-12
+     */
       goBookDetail(bookId) {
         this.$router.push(`/bookdetail/${bookId}`);
       }

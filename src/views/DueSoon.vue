@@ -20,6 +20,16 @@
 </template>
 
 <script>
+/*
+  Author: Xiaoyao Yu
+  Created: April 27, 2025
+  Last Modified: May 8, 2025
+  Module: User Side - Due Soon Page
+  Description:
+    - Displays a table of books that are approaching their due date
+    - Allows users to return books by clicking the "Return" button
+    - Fetches due-soon loan data from the backend on component creation
+*/
 import request from '@/utils/request';
 
 export default {
@@ -33,6 +43,13 @@ export default {
     this.fetchDueSoon();
   },
   methods: {
+    /**
+     * @method fetchDueSoon
+     * @description Sends a GET request to the backend to retrieve books that are due soon.
+     * Populates `dueSoonList` with the response data or sets to empty array on failure.
+     * @author Xiaoyao Yu
+     * @date 2025-04-29
+     */
     async fetchDueSoon() {
       try {
         const res = await request.get('/duesoon');

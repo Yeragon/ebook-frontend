@@ -54,6 +54,17 @@
   </template>
   
   <script>
+  /*
+  Author: Xiaoyao Yu
+  Created: April 10, 2025
+  Last Modified: May 8, 2025
+  Module: User Side - Book List Page (Unlogged View)
+  Description:
+    - Allows unregistered or logged-out users to browse and search eBooks
+    - Displays search results and book detail previews
+    - Enables navigation to the login page or book detail pages (unlogged version)
+    - Reactively updates the search results when route parameter changes
+*/
   import request from '@/utils/request';
   import { Search } from '@element-plus/icons-vue';
 
@@ -98,6 +109,15 @@
           console.error('Failed to fetch books', error);
         }
       },
+
+      /**
+     * @method fetchBooks
+     * @description Sends request to backend to fetch books based on current keyword; updates result list accordingly.
+     * Displays no-result message if no books are found.
+     * Only available to unlogged users for browsing, not borrowing or reviewing.
+     * @author Xiaoyao Yu
+     * @date 2025-04-12
+     */
       searchBooks() {
         if (!this.keyword.trim()) {
         this.$message.warning('Please enter a keyword.');
@@ -106,6 +126,15 @@
         this.$router.push(`/booklistunlogged/${this.keyword.trim()}`);
 
       },
+
+       /**
+     * @method goBookDetail
+     * @description Navigates to the unlogged book detail page using the selected book’s ID.
+     * Only shows read-only information; no borrowing or adding wishlist or comment available without login.
+     * @param {String} bookId - ID of the selected book to view in detail (unlogged mode)
+     * @author Xiaoyao Yu
+     * @date 2025-05-08
+     */
       goBookDetail(bookId) {
         this.$router.push(`/bookdetailunlogged/${bookId}`);
       }
