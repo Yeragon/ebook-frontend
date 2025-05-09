@@ -90,7 +90,7 @@ export default {
   name: 'Home',
   data() {
     return {
-      Refresh,//绑定图标
+      Refresh,
       Search,
       searchQuery: '',
       recommendedBooks: [],
