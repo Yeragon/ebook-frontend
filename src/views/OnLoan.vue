@@ -21,6 +21,16 @@
 </template>
 
 <script>
+/*
+  Author: Xiaoyao Yu
+  Created: April 27, 2025
+  Last Modified: May 8, 2025
+  Module: User Side - On Loan Page
+  Description:
+    - Displays a list of books currently borrowed by the logged-in user
+    - Fetches loan data from the backend and renders it in a table
+    - Provides a button for users to comment on each book
+*/
 import request from '@/utils/request';
 
 export default {
@@ -30,10 +40,18 @@ export default {
       onLoanList: []
     };
   },
+  // Lifecycle hook: fetch the loan list when the page is created
   created() {
     this.fetchOnLoan();
   },
   methods: {
+     /**
+     * @method fetchOnLoan
+     * @description Sends a GET request to the backend to retrieve the list of books the current user has on loan.
+     * Populates the `onLoanList` array with the received data or defaults to an empty array on failure.
+     * @author Xiaoyao Yu
+     * @date 2025-04-29
+     */
     async fetchOnLoan() {
       try {
         const res = await request.get('/onloan');
@@ -42,6 +60,7 @@ export default {
         console.error('Failed to fetch onloan list', error);
       }
     },
+  
     commentBook(book) {
       this.$message.success(`You clicked comment on \"${book.title}\"!`);
     }

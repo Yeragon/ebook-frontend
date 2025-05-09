@@ -1,7 +1,7 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 
-// 引入各个页面
+// Introduce each page
 import Home from '@/views/Home.vue';
 import HomeLogged from '@/views/HomeLogged.vue';
 import Login from '@/views/Login.vue';
@@ -34,7 +34,7 @@ const routes = [
   { path: '/editpage', name: 'EditPage', component: EditPage },
   { path: '/booklist/:keyword', name: 'BookList', component: BookList },
   { path: '/booklistunlogged/:keyword', name: 'BookListUnlogged', component: BookListUnlogged },
-  // 兜底处理：访问不存在的路径，自动跳转回首页
+  // Fallback handling: When accessing a non-existent path, it will automatically redirect back to the home page
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
 
