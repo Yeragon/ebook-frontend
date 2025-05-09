@@ -17,6 +17,8 @@ import Category from '@/views/Category.vue';
 import EditPage from '@/views/EditPage.vue';
 import BookList from '@/views/BookList.vue';
 import BookListUnlogged from '@/views/BookListUnlogged.vue';
+import TopUp from '@/views/TopUp.vue';
+
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -35,7 +37,8 @@ const routes = [
   { path: '/booklist/:keyword', name: 'BookList', component: BookList },
   { path: '/booklistunlogged/:keyword', name: 'BookListUnlogged', component: BookListUnlogged },
   // Fallback handling: When accessing a non-existent path, it will automatically redirect back to the home page
-  { path: '/:pathMatch(.*)*', redirect: '/' }
+  { path: '/:pathMatch(.*)*', redirect: '/' },
+  { path: '/topup', name: 'TopUp', component: TopUp },
 ];
 
 const router = createRouter({

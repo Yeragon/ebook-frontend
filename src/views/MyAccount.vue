@@ -21,7 +21,7 @@
      <!-- Header section with app logo -->
     <header class="header">
       <h1 class="logo" @click="goHome">Ebooks</h1>
-      <el-button :icon="moneyIcon" circle style="border: none; cursor: pointer;" />
+      <el-button :icon="moneyIcon" circle style="border: none; cursor: pointer;" @click="goToTopUp"  />
     </header>
 
     <div class="content">
@@ -44,6 +44,7 @@
           <!-- Buttons: Edit Profile and Exit Account -->
           <div class="button-group">
             <el-button type="primary" @click="goToEdit">Edit</el-button>
+            <el-button type="success" @click="goToTopUp">Top Up</el-button>
             <el-button type="danger" @click="logout">Exit</el-button>
           </div>
         </el-tab-pane>
@@ -271,6 +272,9 @@ export default {
     goToEdit() {
       this.$router.push('/editpage');
     },
+    goToTopUp() {
+  this.$router.push({ name: 'TopUp' });
+},
     // Fetch latest user info from backend
     async fetchUserInfo(userId) {
       const res = await request.get(`/user/info/${userId}`);
